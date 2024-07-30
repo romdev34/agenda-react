@@ -1,5 +1,7 @@
 import {useSelector, useDispatch} from "react-redux";
 import {toPreviousMonth, toNextMonth} from "../features/monthProperties.js";
+import {toPreviousDay, toNextDay} from "../features/dailyProperties.js";
+import {toPreviousWeek, toNextWeek} from "../features/weeklyProperties.js";
 import {
     toWeeklyType,
     toDailyType,
@@ -8,22 +10,49 @@ import {
 import ButtonToday from "./ButtonToday.jsx";
 import {useState} from "react";
 
+
 export default function Header() {
     const monthReducer = useSelector(state => (state.monthReducer))
+    const weekReducer = useSelector(state => (state.weeklyReducer))
+    const dayReducer = useSelector(state => (state.dailyReducer))
+
     const month = monthReducer.month
     const disableButton = monthReducer.disableButton
     const monthNumber = monthReducer.monthNumber
     const year = monthReducer.year
 
+    const agendaType = useSelector(state => state.calendarTypeReducer.type)
 
     const dispatch = useDispatch()
 
-    const handleToPreviousMonth = function () {
-        dispatch(toPreviousMonth())
+
+    const weekNumber = weekReducer.weekNumber
+    const monthName = weekReducer.monthName
+
+    const dayName = dayReducer.dayName
+
+    const handleToPrevious = function () {
+        if (agendaType === "monthly"){
+            dispatch(toPreviousMonth())
+        }
+        if (agendaType === "weekly"){
+            dispatch(toPreviousWeek())
+        }
+        if (agendaType === "daily"){
+            dispatch(toPreviousDay())
+        }
     }
 
-    const handleToNextMonth = function () {
-        dispatch(toNextMonth())
+    const handleToNext = function () {
+        if (agendaType === "monthly") {
+            dispatch(toNextMonth())
+        }
+        if (agendaType === "weekly"){
+            dispatch(toNextWeek())
+        }
+        if (agendaType === "daily"){
+            dispatch(toNextDay())
+        }
     }
 
     const handleWeeklyCalendar = function () {
@@ -37,12 +66,16 @@ export default function Header() {
     const handleDailyCalendar = function () {
         dispatch(toDailyType())
     }
+
+
+
+
     const displayYear = new Date(year, monthNumber).getFullYear()
 
     return (
         <>
             <div
-                className="cursor-pointer self-auto text-4xl">{displayYear}</div>
+                className="cursor-pointer self-auto text-4xl">{displayYear } {agendaType === "weekly" && monthName }</div>
 
             <div className="ml-auto items-center flex justify-end select-none">
                 <div className="flex mr-4">
@@ -55,11 +88,11 @@ export default function Header() {
                 </div>
                 <ButtonToday disableButton={disableButton}/>
                 <div className="p-2">
-                <span onClick={handleToPreviousMonth}
+                <span onClick={handleToPrevious}
                       className="cursor-pointer text-3xl">&#9664;</span>
                     <span
-                        className="inline-block w-[130px] capitalize text-xl">{month}</span>
-                    <span onClick={handleToNextMonth}
+                        className="inline-block w-[130px] capitalize text-xl">{agendaType === "monthly" ? month : agendaType === "weekly" ? " semaine " + weekNumber : dayName}</span>
+                    <span onClick={handleToNext}
                           className="cursor-pointer text-3xl">&#9654;</span>
                 </div>
             </div>

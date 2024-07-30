@@ -4,7 +4,13 @@ import {createSlice} from "@reduxjs/toolkit";
 const daysInMonth = (year, month) => new Date(year, month + 1, 0).getDate();
 
 // POUR CETTE FONCTION ON ATTEND LE MOIS - 1 donc month
-const firstDayNumberCalcul = (year, month) => new Date(year, month, 1).getDay();
+const firstDayNumberCalcul = (year, month) => {
+    if (new Date(year, month, 1).getDay() === 0) {
+        return 7
+    } else{
+        return new Date(year, month, 1).getDay();
+    }
+}
 const today = new Date();
 const DateElements = {
     "year": today.getFullYear(),

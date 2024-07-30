@@ -5,7 +5,7 @@ function App() {
 
   return (
     <>
-        <h1 className="text-5xl">Mon agenda</h1>
+        <h1 className="text-5xl">Mon agenda en react</h1>
         <Calendar />
     </>
   )
