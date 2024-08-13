@@ -1,13 +1,23 @@
 import React, {useState} from 'react'
 import {useDispatch, useSelector} from "react-redux";
 import {loadToday} from "../features/monthProperties.js";
+import {loadTodayWeek} from "../features/weeklyProperties.js";
+import {loadTodayDay} from "../features/dailyProperties.js";
 
 export default function ButtonToday({disableButton}) {
 
     const dispatch = useDispatch()
-
+    const agendaType = useSelector(state => state.calendarTypeReducer.type)
     const handleLoadToday = function () {
-        return dispatch(loadToday())
+        if(agendaType ==="monthly") {
+            return dispatch(loadToday())
+        }
+        if(agendaType ==="weekly") {
+            return dispatch(loadTodayWeek())
+        }
+        if(agendaType ==="daily") {
+            return dispatch(loadTodayDay())
+        }
     }
     return (
         <div>

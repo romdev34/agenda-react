@@ -15,17 +15,17 @@ export default function WeeklyCalendar() {
             if((i % 8 === 0) && ((i / 8) % 2 === 0)) {
                 cases.push(
                     <div key={nanoid(8)}
-                         className="bg-white border border-gray-300">{("0" + (i / 8)/2).slice(-2) + " h"}</div>
+                         className="h-10 leading-10 bg-white border border-gray-300">{("0" + (i / 8)/2).slice(-2) + " h"}</div>
                 )
             }
             if((i % 8 === 0) && ((i / 8) % 2 !== 0)) {
                 cases.push(<div key={nanoid(8)}
-                     className="bg-white border border-gray-300"></div>)
+                     className="h-10 leading-10  bg-white border border-gray-300"></div>)
             }
             if ((i % 8 !== 0)) {
                 cases.push(
                     <div key={nanoid(8)}
-                         className="h-10 bg-white border border-gray-300"></div>
+                         className="h-10 leading-10 bg-white border border-gray-300"></div>
                 )
             }
 

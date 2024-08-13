@@ -1,5 +1,4 @@
 import {nanoid} from "nanoid";
-import {useSelector} from "react-redux";
 
 export default function DailyCalendar() {
 
@@ -12,18 +11,18 @@ export default function DailyCalendar() {
             if((i % 2 === 0) && ((i / 2) % 2 === 0)) {
                 cases.push(
                     <div key={nanoid(8)}
-                         className="bg-white border border-gray-300">{("0" + (i / 2)/2).slice(-2) + " h"}</div>
+                         className="h-10 leading-10 bg-white border border-gray-300">{("0" + (i / 2)/2).slice(-2) + " h"}</div>
                 )
             }
             if((i % 2 === 0) && ((i / 2) % 2 !== 0)) {
                 cases.push(<div key={nanoid(8)}
-                                className="bg-white border border-gray-300">{("0" + halfHour).slice(-2) + " h 30"}</div>)
+                                className="h-10 leading-10 bg-white border border-gray-300">{("0" + halfHour).slice(-2) + " h 30"}</div>)
                 halfHour++
             }
             if ((i % 2 !== 0)) {
                 cases.push(
                     <div key={nanoid(8)}
-                         className="h-10 bg-white border border-gray-300"></div>
+                         className="h-10 leading-10 bg-white border border-gray-300"></div>
                 )
             }
         }

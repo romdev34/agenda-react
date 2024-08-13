@@ -1,13 +1,16 @@
 import {createSlice} from "@reduxjs/toolkit";
+import {toPreviousWeek} from "./weeklyProperties.js";
+import moment from "moment";
+
 
 // POUR CETTE FONCTION ON ATTEND LE VRAI NOMBRE DU MOIS
 const daysInMonth = (year, month) => new Date(year, month + 1, 0).getDate();
-
+moment.locale('fr')
 // POUR CETTE FONCTION ON ATTEND LE MOIS - 1 donc month
 const firstDayNumberCalcul = (year, month) => {
     if (new Date(year, month, 1).getDay() === 0) {
         return 7
-    } else{
+    } else {
         return new Date(year, month, 1).getDay();
     }
 }
@@ -27,7 +30,6 @@ const DateElements = {
 }
 const checkActualMonth = function (actualMonth, actualYear) {
     const today = new Date();
-    // console.log(actualMonth === today.getMonth() && actualYear === today.getFullYear())
     if (actualMonth !== today.getMonth() || actualYear !== today.getFullYear()) {
         return false
     }
@@ -87,7 +89,12 @@ export const monthSlice = createSlice({
             state.actualMonth = checkActualMonth(state.monthNumber, state.year)
             state.disableButton = true
         }
-    }
+    },
+    // extraReducers: (builder) => {
+    //     builder.addCase(toPreviousWeek, (state, action) => {
+    //         console.log(moment(state.year, state.monthNumber, state.day) )
+    //     })
+    // }
 })
 
 export const {toPreviousMonth, toNextMonth, loadToday} = monthSlice.actions

@@ -7,6 +7,8 @@ const today = new Date(); // get current date
 moment.locale('fr')
 const dayName = moment().format('dddd')
 
+const date = moment().format("DD/MM/YYYY")
+
 
 const DateElements = {
     "year": today.getFullYear(),
@@ -14,7 +16,9 @@ const DateElements = {
     "month": today.toLocaleString('fr-FR', {month: 'long'}),
     'todayDayNumber': today.getDate(),
     'dayNumber': today.getDay(),
-    'dayName' : dayName,
+    'dayName': dayName,
+    'compteur': 0,
+    'date': date,
     'disableButton': true
 }
 
@@ -26,21 +30,68 @@ export const dailySlice = createSlice({
     initialState,
     reducers: {
         toPreviousDay: (state, actions) => {
-
+            state.compteur -= 1
+            if (state.compteur > 0) {
+                state.disableButton = false
+                state.dayName = moment().add(state.compteur, "d").format("dddd")
+                state.date = moment().add(state.compteur, "d").format("DD/MM/YYYY")
+            }
+            if (state.compteur < 0) {
+                state.disableButton = false
+                state.dayName = moment().subtract(Math.abs(state.compteur), "d").format("dddd")
+                state.date = moment().subtract(Math.abs(state.compteur), "d").format("DD/MM/YYYY")
+            }
+            if (state.compteur === 0) {
+                const today = moment();
+                state.monthNumber = today.month(),
+                    state.month = today.month("m").format("MMMM"),
+                    state.todayDayNumber = today.date(),
+                    state.dayNumber = today.day(),
+                    state.dayName = today.format('dddd'),
+                    state.date = today.format("DD/MM/YYYY"),
+                    state.disableButton = true
+            }
         },
+
         toNextDay: (state) => {
+            state.compteur += 1
+            if (state.compteur < 0) {
+                state.disableButton = false
+                state.dayName = moment().subtract(Math.abs(state.compteur), "d").format("dddd")
+                state.date = moment().subtract(Math.abs(state.compteur), "d").format("DD/MM/YYYY")
 
+            }
+            if (state.compteur > 0) {
+                state.disableButton = false
+                state.dayName = moment().add(state.compteur, "d").format("dddd")
+                state.date = moment().add(state.compteur, "d").format("DD/MM/YYYY")
+            }
+            if (state.compteur === 0) {
+                const today = moment();
+                state.monthNumber = today.month(),
+                    state.month = today.month("m").format("MMMM"),
+                    state.todayDayNumber = today.date(),
+                    state.dayNumber = today.day(),
+                    state.dayName = today.format('dddd'),
+                    state.date = today.format("DD/MM/YYYY"),
+                    state.disableButton = true
+            }
         },
-        loadToday: (state) => {
-            const today = new Date();
-            state.year = today.getFullYear();
-            state.monthNumber = today.getMonth();
-            state.month = today.toLocaleString('fr-FR', {month: 'long'});
-            state.disableButton = true
+        loadTodayDay: (state) => {
+            const today = moment();
+            state.year = today.year(),
+                state.monthNumber = today.month(),
+                state.month = today.month("m").format("MMMM"),
+                state.todayDayNumber = today.date(),
+                state.dayNumber = today.day(),
+                state.dayName = today.format('dddd'),
+                state.compteur = 0,
+                state.date = today.format("DD/MM/YYYY"),
+                state.disableButton = true
         }
-    }
+    },
 })
 
-export const {toPreviousDay, toNextDay, loadToday} = dailySlice.actions
+export const {toPreviousDay, toNextDay, loadTodayDay} = dailySlice.actions
 
 export default dailySlice.reducer

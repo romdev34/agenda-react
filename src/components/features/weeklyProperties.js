@@ -7,6 +7,7 @@ moment.locale('fr')
 const weekNumber = moment().isoWeek()
 const dayNumbers = []
 const monthName = moment().month("M").format("MMMM")
+const year = moment().year()
 for (let i = 0; i < 7; i++) {
     dayNumbers.push(moment().weekday(i).date())
 }
@@ -14,68 +15,97 @@ const DateElements = {
     'weekNumber': weekNumber,
     'dayNumbers': dayNumbers,
     'monthName' : monthName,
-    'Compteur': 0,
+    'year' : year,
+    'compteur': 0,
+    'disableButton': true,
+    'actualWeek': true,
+    'todayWeek': moment().isoWeek()
 }
 
 const initialState = DateElements
 
 export const weekSlice = createSlice({
-    name: "monthProperties",
+    name: "weekProperties",
     initialState,
     reducers: {
         toPreviousWeek: (state, actions) => {
             const daysArray = []
-            state.Compteur -=1
-            if (state.Compteur > 0) {
-                state.monthName = moment().add(state.Compteur , "w").month("M").format("MMMM")
-
+            state.compteur -=1
+            if (state.compteur > 0) {
+                state.disableButton = false
+                state.monthName = moment().add(state.compteur , "w").month("M").format("MMMM")
+                state.weekNumber = moment().add(state.compteur , "w").isoWeek()
+                state.year = moment().add(state.compteur, 'w').year()
                 for (let i = 0; i < 7; i++) {
-                    daysArray.push(moment().add(state.Compteur , "w").weekday(i).date())
+                    daysArray.push(moment().add(state.compteur , "w").weekday(i).date())
                 }
             }
-            else {
-                state.monthName = moment().subtract(Math.abs(state.Compteur), "w").month("M").format("MMMM")
+            if (state.compteur < 0) {
+                state.disableButton = false
+                state.weekNumber = moment().subtract(Math.abs(state.compteur), "w").isoWeek()
+                state.monthName = moment().subtract(Math.abs(state.compteur), "w").month("M").format("MMMM")
+                state.year = moment().subtract(Math.abs(state.compteur), 'w').year()
                 for (let i = 0; i < 7; i++) {
-                    daysArray.push(moment().subtract(Math.abs(state.Compteur), "w").weekday(i).date())
+                    daysArray.push(moment().subtract(Math.abs(state.compteur), "w").weekday(i).date())
                 }
             }
-
-            state.weekNumber -= 1
-
+            if (state.compteur === 0) {
+                state.disableButton = true
+            }
             state.dayNumbers = daysArray
         },
         toNextWeek: (state) => {
             const daysArray = []
-            state.Compteur +=1
+            state.compteur +=1
 
-            if (state.Compteur < 0) {
-                state.monthName =moment().subtract(Math.abs(state.Compteur) , "w").month("M").format("MMMM")
+            if (state.compteur < 0) {
+                state.disableButton = false
+                state.weekNumber = moment().subtract(Math.abs(state.compteur), "w").isoWeek()
+                state.monthName =moment().subtract(Math.abs(state.compteur) , "w").month("M").format("MMMM")
+                state.year = moment().subtract(Math.abs(state.compteur), 'w').year()
                 for (let i = 0; i < 7; i++) {
-                    daysArray.push(moment().subtract(Math.abs(state.Compteur) , "w").weekday(i).date())
+                    daysArray.push(moment().subtract(Math.abs(state.compteur) , "w").weekday(i).date())
                 }
             }
 
-            else {
-                state.monthName = moment().add(state.Compteur, "w").month("M").format("MMMM")
+            if (state.compteur > 0) {
+                state.disableButton = false
+                state.weekNumber = moment().add(state.compteur , "w").isoWeek()
+                state.monthName = moment().add(state.compteur, "w").month("M").format("MMMM")
+                state.year = moment().add(state.compteur, 'w').year()
                 for (let i = 0; i < 7; i++) {
-                    daysArray.push(moment().add(state.Compteur, "w").weekday(i).date())
+                    daysArray.push(moment().add(state.compteur, "w").weekday(i).date())
                 }
             }
-            state.weekNumber += 1
-
-
+            if (state.compteur === 0) {
+                const today = moment();
+                state.weekNumber = today.isoWeek()
+                state.monthName = today.month("M").format("MMMM")
+                state.year = today.year()
+                for (let i = 0; i < 7; i++) {
+                    daysArray.push(moment().weekday(i).date())
+                }
+                state.disableButton = true
+            }
             state.dayNumbers = daysArray
         },
-        loadToday: (state) => {
-            const today = new Date();
-            state.year = today.getFullYear();
-            state.monthNumber = today.getMonth();
-            state.month = today.toLocaleString('fr-FR', {month: 'long'});
+        loadTodayWeek: (state) => {
+            const daysArray = []
+
+            const today = moment();
+            state.weekNumber = today.isoWeek()
+            state.monthName = today.month("M").format("MMMM")
+            state.year = today.year()
+            for (let i = 0; i < 7; i++) {
+                daysArray.push(moment().weekday(i).date())
+            }
+            state.compteur = 0
             state.disableButton = true
+            state.dayNumbers = daysArray
         }
     }
 })
 
-export const {toPreviousWeek, toNextWeek, loadToday} = weekSlice.actions
+export const {toPreviousWeek, toNextWeek, loadTodayWeek} = weekSlice.actions
 
 export default weekSlice.reducer
