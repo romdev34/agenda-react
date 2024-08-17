@@ -35,8 +35,8 @@ export default function DailyCalendar() {
             <div
                 className="grid grid-cols-[repeat(2,minmax(140px,_1fr))] grid-flow-row w-full max-w-[1000px]">
 
-                <div className="bg-white border border-gray-300">Heures</div>
-                <div className="bg-amber-50 border border-gray-300">jour</div>
+                <div className="text-xl bg-white border border-gray-300">Heure</div>
+                <div className="text-xl bg-amber-50 border border-gray-300">jour</div>
 
                 {(createDailyCalendar())}
 

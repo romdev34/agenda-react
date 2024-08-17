@@ -13,12 +13,12 @@ export default function DaysTable({
                                   }) {
 
     const [showModal, setShowModal] = useState(false)
-    // console.log(eventDetails)
     let tag = []
+    console.log(todayDay)
     return (
         <>
             {todayDay === dayNumber && <div
-                className={`h-[130px] border border-gray-300 ${actualMonthState && active ? 'bg-amber-300' : !active ? 'bg-gray-100' : 'bg-white'}`}>
+                className={`h-[130px] border-r border-l border-b border-gray-300 ${actualMonthState && active ? 'bg-amber-300' : !active ? 'bg-gray-100' : 'bg-white'}`}>
                 <p onClick={() => setShowModal(!showModal)}
                    className="inline-block cursor-pointer float-right mr-4">{dayNumber}</p>
                 <br/>
@@ -26,21 +26,21 @@ export default function DaysTable({
                 <div
                     className="flex flex-col">{eventDetails.length ? eventDetails.map(function (event, index, array) {
                     tag = []
-                    if (index === 0) {
-                        if (array[array.length - 1].numberOfEventsInADay < event.position) {
-                            for (let i = 1; i < event.position; i++) {
-                                tag.push(<div className="opacity-0 mb-1"
-                                              key={nanoid(8)}>{index}</div>)
-                            }
-                        }
-                    }
-                    return ([tag, <div className={`mb-1 ${event.bgColor}`}
+                    // if (index === 0) {
+                    //     if (array.length - 1 <= event.position) {
+                    //         for (let i = 1; i < event.position; i++) {
+                    //             tag.push(<div className="opacity-0 mb-1"
+                    //                           key={nanoid(8)}>{index}</div>)
+                    //         }
+                    //     }
+                    // }
+                    return ([tag, <div className={`text-sm mb-1 ${event.bgColor}`}
                                        key={nanoid(8)}>{event.title}</div>])
                 }) : ""}</div>
             </div>}
 
             {todayDay !== dayNumber && <div
-                className={`h-[130px] border border-gray-300 ${!active ? 'bg-gray-100' : 'bg-white'}`}>
+                className={`h-[130px] bg-white border-r border-l border-b border-gray-300 ${!active ? 'bg-gray-100' : 'bg-white'}`}>
                 <p onClick={() => setShowModal(!showModal)}
                    className="inline-block cursor-pointer float-right mr-4">{dayNumber}</p>
                 <br/>
@@ -48,15 +48,17 @@ export default function DaysTable({
                 <div
                     className="flex flex-col">{eventDetails.length ? eventDetails.map(function (event, index, array) {
                     tag = []
-                    if (index === 0) {
-                        if (array[array.length - 1].numberOfEventsInADay < event.position) {
-                            for (let i = 1; i < event.position; i++) {
-                                tag.push(<div className="opacity-0 mb-1"
-                                              key={nanoid(8)}>{index}</div>)
-                            }
-                        }
-                    }
-                    return ([tag, <div className={`mb-1 ${event.bgColor}`}
+
+                    // if (index === 0) {
+                    //     if (array.length - 1 <= event.position) {
+                    //         for (let i = 1; i < event.position; i++) {
+                    //             tag.push(<div className="opacity-0 mb-1"
+                    //                           key={nanoid(8)}>{index}</div>)
+                    //         }
+                    //     }
+                    // }
+
+                    return ([tag, <div className={`text-sm mb-1 ${event.bgColor}`}
                                        key={nanoid(8)}>{event.title}</div>])
                 }) : ""}</div>
             </div>}

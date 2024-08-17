@@ -1,5 +1,4 @@
 import {createSlice} from "@reduxjs/toolkit";
-import {toPreviousWeek} from "./weeklyProperties.js";
 import moment from "moment";
 
 
@@ -88,6 +87,7 @@ export const monthSlice = createSlice({
             state.firstDayNumber = firstDayNumberCalcul(state.year, state.monthNumber)
             state.actualMonth = checkActualMonth(state.monthNumber, state.year)
             state.disableButton = true
+            console.log(state.actualMonth)
         }
     },
     // extraReducers: (builder) => {
