@@ -14,7 +14,6 @@ export default function DaysTable({
 
     const [showModal, setShowModal] = useState(false)
     let tag = []
-    console.log(todayDay)
     return (
         <>
             {todayDay === dayNumber && <div
@@ -40,7 +39,7 @@ export default function DaysTable({
             </div>}
 
             {todayDay !== dayNumber && <div
-                className={`h-[130px] bg-white border-r border-l border-b border-gray-300 ${!active ? 'bg-gray-100' : 'bg-white'}`}>
+                className={`h-[130px] border-r border-l border-b border-gray-300 ${!active ? 'bg-gray-100' : 'bg-white'}`}>
                 <p onClick={() => setShowModal(!showModal)}
                    className="inline-block cursor-pointer float-right mr-4">{dayNumber}</p>
                 <br/>

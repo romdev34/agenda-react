@@ -1,28 +1,54 @@
 import {nanoid} from "nanoid";
+import {useSelector} from "react-redux";
+import moment from "moment/moment.js";
+import dailyReducer from "../features/dailyProperties.js";
 
 export default function DailyCalendar() {
 
+    const eventState = useSelector(state => state.eventReducer)
+    const dailyReducer = useSelector(state => state.dailyReducer)
+
+    console.log(eventState.events)
+
     let cases = []
     let halfHour = 0
+    let actualHour = -0.5
+    let actualMinute = 0
+    let eventPlaced = []
+    let bgEvent = []
     function createDailyCalendar() {
         for(let i=0; i<96; i++) {
 
-            // console.log((i % 8) % 2 === 0)
             if((i % 2 === 0) && ((i / 2) % 2 === 0)) {
+                actualHour = actualHour + 0.5
+                actualMinute = 0
                 cases.push(
                     <div key={nanoid(8)}
-                         className="h-10 leading-10 bg-white border border-gray-300">{("0" + (i / 2)/2).slice(-2) + " h"}</div>
+                         className="h-10 leading-10 bg-white border-r border-l border-t border-gray-300"><div className="relative bottom-[2px] text-sm">{("0" + (i / 2)/2).slice(-2) + " h"}</div></div>
                 )
             }
             if((i % 2 === 0) && ((i / 2) % 2 !== 0)) {
+                actualHour = actualHour + 0.5
+                actualMinute = 30
                 cases.push(<div key={nanoid(8)}
-                                className="h-10 leading-10 bg-white border border-gray-300">{("0" + halfHour).slice(-2) + " h 30"}</div>)
+                                className="h-10 leading-10 bg-white border-r border-l border-t border-gray-300"><div className="relative bottom-[2px] text-sm">{("0" + halfHour).slice(-2) + " h 30"}</div></div>)
                 halfHour++
             }
             if ((i % 2 !== 0)) {
+                eventState.events.map(function (event) {
+                    event.eventsDaysSlots.map(function (slots) {
+                        if (!event.allDayEvent && event.eventType === 0) {
+                            if (moment(slots).year() === dailyReducer.year && moment(slots).month() === dailyReducer.monthNumber && moment(slots).date() === dailyReducer.todayDayNumber && moment(slots).hour() === parseInt(actualHour) && moment(slots).minute() === actualMinute) {
+                                eventPlaced[i] = event.title
+                                bgEvent[i] = event.bgColor
+                            }
+                        }
+                    })
+                })
+
                 cases.push(
                     <div key={nanoid(8)}
-                         className="h-10 leading-10 bg-white border border-gray-300"></div>
+                         className={`${eventPlaced[i] ? `${bgEvent[i]} h-10 leading-10  border-r border-l border-b border-gray-300` : "h-10 leading-10 bg-white border-r border-l border-t border-gray-300"}`}>{eventPlaced[i]}</div>
                 )
             }
         }
@@ -35,8 +61,8 @@ export default function DailyCalendar() {
             <div
                 className="grid grid-cols-[repeat(2,minmax(140px,_1fr))] grid-flow-row w-full max-w-[1000px]">
 
-                <div className="text-xl bg-white border border-gray-300">Heure</div>
-                <div className="text-xl bg-amber-50 border border-gray-300">jour</div>
+                <div className="text-xl bg-white border-r border-l border-gray-300">Heure</div>
+                <div className="text-xl bg-amber-50 border-r border-l  border-gray-300">jour</div>
 
                 {(createDailyCalendar())}
 

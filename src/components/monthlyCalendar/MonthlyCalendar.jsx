@@ -5,7 +5,7 @@ import moment from "moment";
 
 export default function MonthlyCalendar() {
     const eventState = useSelector(state => state.eventReducer)
-
+    // console.log(eventState)
     const monthReducerState = useSelector(state => state.monthReducer)
     const todayDate = new Date()
     const daysNumbers = [];
@@ -30,7 +30,7 @@ export default function MonthlyCalendar() {
         if (i >= monthReducerState.firstDayNumber && i < monthReducerState.numberOfDaysInTheMonth + (monthReducerState.firstDayNumber)) {
             if (eventState.events) {
 
-                eventState.events.map(function (event, index, array) {
+                eventState.events.map(function (event) {
 
                         const startDateEvent = moment(new Date(event.start_date_event));
                         const endDateEvent = moment(new Date(event.end_date_event));
@@ -92,13 +92,27 @@ export default function MonthlyCalendar() {
             <div
                 className="grid grid-cols-[repeat(7,minmax(100px,_1fr))] grid-flow-row w-full max-w-[1000px]">
 
-                <div className=" text-xl border-r border-l  border-gray-300">Lun</div>
-                <div className=" text-xl border-r border-l border-gray-300">Mar</div>
-                <div className=" text-xl border-r border-l border-gray-300">Mer</div>
-                <div className=" text-xl border-r border-l border-gray-300">Jeu</div>
-                <div className=" text-xl border-r border-l border-gray-300">Ven</div>
-                <div className=" text-xl border-r border-l border-gray-300">Sam</div>
-                <div className=" text-xl border-r border-l border-gray-300">Dim</div>
+                <div
+                    className=" text-xl border-r border-l  border-gray-300">Lun
+                </div>
+                <div
+                    className=" text-xl border-r border-l border-gray-300">Mar
+                </div>
+                <div
+                    className=" text-xl border-r border-l border-gray-300">Mer
+                </div>
+                <div
+                    className=" text-xl border-r border-l border-gray-300">Jeu
+                </div>
+                <div
+                    className=" text-xl border-r border-l border-gray-300">Ven
+                </div>
+                <div
+                    className=" text-xl border-r border-l border-gray-300">Sam
+                </div>
+                <div
+                    className=" text-xl border-r border-l border-gray-300">Dim
+                </div>
 
                 {daysNumbers.map(day => {
                         return <DaysTable key={nanoid(8)}

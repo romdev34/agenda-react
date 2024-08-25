@@ -35,11 +35,13 @@ export const dailySlice = createSlice({
                 state.disableButton = false
                 state.dayName = moment().add(state.compteur, "d").format("dddd")
                 state.date = moment().add(state.compteur, "d").format("DD/MM/YYYY")
+                state.todayDayNumber = moment().add(state.compteur,"d").date()
             }
             if (state.compteur < 0) {
                 state.disableButton = false
                 state.dayName = moment().subtract(Math.abs(state.compteur), "d").format("dddd")
                 state.date = moment().subtract(Math.abs(state.compteur), "d").format("DD/MM/YYYY")
+                state.todayDayNumber = moment().subtract(Math.abs(state.compteur), "d").date()
             }
             if (state.compteur === 0) {
                 const today = moment();
@@ -59,12 +61,13 @@ export const dailySlice = createSlice({
                 state.disableButton = false
                 state.dayName = moment().subtract(Math.abs(state.compteur), "d").format("dddd")
                 state.date = moment().subtract(Math.abs(state.compteur), "d").format("DD/MM/YYYY")
-
+                state.todayDayNumber = moment().subtract(Math.abs(state.compteur), "d").date()
             }
             if (state.compteur > 0) {
                 state.disableButton = false
                 state.dayName = moment().add(state.compteur, "d").format("dddd")
                 state.date = moment().add(state.compteur, "d").format("DD/MM/YYYY")
+                state.todayDayNumber = moment().add(state.compteur,"d").date()
             }
             if (state.compteur === 0) {
                 const today = moment();

@@ -1,13 +1,9 @@
 import {createSlice} from "@reduxjs/toolkit";
 import moment from "moment";
 
-moment.locale('fr')
 const initialState = {
     events: [],
-    positions: [],
-    eventDays: []
 }
-let position = 1
 const colors = [
     "bg-pink-500",
     "bg-rose-500",
@@ -21,15 +17,12 @@ const colors = [
     "bg-teal-500"
 ];
 
-function reducer(accumulator, currentValue, index) {
-    // console.log(accumulator)
-    // console.log(currentValue)
-    // if(accumulator.)
-}
-
+let eventsDaysSlots = []
 let startDateEvent = []
 let endDateEvent = []
-
+let eventDays = []
+let position = 1
+let daySlotIndice = 0
 
 export const eventSlice = createSlice({
     name: "event",
@@ -44,28 +37,57 @@ export const eventSlice = createSlice({
                     return 1;
                 }
             })
-            // console.log(actions.payload)
-            actions.payload.map(function (event, index, array) {
-                state.eventDays = []
-                state.eventDays["daysEvents"]= []
-
-                state.eventDays["position"] = position
-                state.eventDays["id"] = event.id
+            actions.payload.map(function (event, index) {
+                eventsDaysSlots[event.id] = []
+                eventDays = []
+                daySlotIndice = 0
+                // state.eventsDaysSlots["position"] = position
                 startDateEvent = moment(event.start_date_event)
+                startDateEvent.utc().hour(event.hourTimeSlotStart)
+                startDateEvent.minute(event.minuteTimeSlotStart)
                 endDateEvent = moment(event.end_date_event)
-                state.eventDays["daysEvents"].push(startDateEvent.format("YYYY-MM-DD"))
-                startDateEvent.add(1, 'd').date()
-                while (startDateEvent.isBefore(moment(event.end_date_event), 'day')) {
-                    state.eventDays["daysEvents"].push(startDateEvent.format("YYYY-MM-DD"))
-                    startDateEvent.add(1, 'd').date()
-                }
-                state.eventDays["daysEvents"].push(endDateEvent.format("YYYY-MM-DD"))
+                endDateEvent.utc().hour(event.hourTimeSlotEnd)
+                endDateEvent.minute(event.minuteTimeSlotEnd)
 
+//todo ne pas sauvegarder l'event en date time et utiliser uniquement les slots start et end
+// pour calculer les slots des events
+// eventType 0 = event de type rdv eventType 1 = event de type memo
+                if (!event.allDayEvent && event.eventType === 0) {
+                    eventDays.push(startDateEvent.utc().format("YYYY-MM-DD HH:mm:ss"))
+                    let dayEndDate = moment(event.start_date_event).utc().hour(event.hourTimeSlotEnd)
+                    dayEndDate.minute(event.minuteTimeSlotEnd)
+                    dayEndDate.subtract(30, "m")
+                    if (!dayEndDate.isSame(startDateEvent, "m")) {
+                        while (startDateEvent.isBefore(endDateEvent, 'minute')) {
+                            startDateEvent.add(30, 'minute')
+                            eventDays.push(startDateEvent.utc().format("YYYY-MM-DD HH:mm:ss"))
+
+                            if (startDateEvent.isSame(dayEndDate, "m")) {
+                                daySlotIndice++
+                                dayEndDate = moment(event.start_date_event).utc().hour(event.hourTimeSlotEnd).minute(event.minuteTimeSlotEnd)
+                                dayEndDate.subtract(30, "m")
+                                dayEndDate.add(daySlotIndice, 'day')
+                                startDateEvent = moment(event.start_date_event)
+                                startDateEvent.utc().hour(event.hourTimeSlotStart)
+                                startDateEvent.minute(event.minuteTimeSlotStart)
+                                startDateEvent.add(daySlotIndice, 'day')
+                                startDateEvent.subtract(30, 'minute')
+                            }
+                        }
+                    }
+                }
+                if (event.allDayEvent) {
+                    eventDays.push(startDateEvent.utc().format("YYYY-MM-DD"))
+                    startDateEvent.add(1, 'd').date()
+                    while (startDateEvent.isBefore(moment(event.end_date_event), 'day')) {
+                        eventDays.push(startDateEvent.utc().format("YYYY-MM-DD"))
+                        startDateEvent.add(1, 'd').date()
+                    }
+                }
                 let eventWithBg = {
                     ...event,
+                    eventsDaysSlots: eventDays,
                     bgColor: colors[index % 10],
-                    position: position,
-                    eventDays: state.eventDays
                 }
                 state.events.push(eventWithBg)
                 position++
