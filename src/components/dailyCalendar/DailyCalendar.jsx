@@ -7,6 +7,7 @@ export default function DailyCalendar() {
 
     const eventState = useSelector(state => state.eventReducer)
     const dailyReducer = useSelector(state => state.dailyReducer)
+    const regex = /(\d+)-(\d+)-(\d+)\s(\d+):(\d+):(\d+)/
 
     console.log(eventState.events)
 
@@ -37,8 +38,9 @@ export default function DailyCalendar() {
             if ((i % 2 !== 0)) {
                 eventState.events.map(function (event) {
                     event.eventsDaysSlots.map(function (slots) {
+
                         if (!event.allDayEvent && event.eventType === 0) {
-                            if (moment(slots).year() === dailyReducer.year && moment(slots).month() === dailyReducer.monthNumber && moment(slots).date() === dailyReducer.todayDayNumber && moment(slots).hour() === parseInt(actualHour) && moment(slots).minute() === actualMinute) {
+                            if (parseInt(slots.match(regex)[1]) === dailyReducer.year && parseInt(slots.match(regex)[2] - 1) === dailyReducer.monthNumber && parseInt(slots.match(regex)[3]) === dailyReducer.todayDayNumber && parseInt(slots.match(regex)[4]) === parseInt(actualHour) && parseInt(slots.match(regex)[5]) === actualMinute) {
                                 eventPlaced[i] = event.title
                                 bgEvent[i] = event.bgColor
                             }

@@ -3,10 +3,10 @@ import {useSelector} from "react-redux";
 import moment from "moment";
 
 export default function WeeklyCalendar() {
+    const regex = /(\d+)-(\d+)-(\d+)\s(\d+):(\d+):(\d+)/
 
     const eventState = useSelector(state => state.eventReducer)
     const weekReducer = useSelector(state => state.weeklyReducer)
-    console.log(eventState.events)
     moment.locale('fr')
     const dayNumbers = weekReducer.dayNumbers
     let cases = []
@@ -44,7 +44,7 @@ export default function WeeklyCalendar() {
                 eventState.events.map(function (event) {
                     event.eventsDaysSlots.map(function (slots) {
                         if (event.eventType === 0) {
-                            if (moment(slots).year() === weekReducer.year && moment(slots).month() === weekReducer.monthNumber && moment(slots).date() === dayNumbers[i % 8 - 1] && moment(slots).hour() === parseInt(actualHour) && moment(slots).minute() === actualMinute) {
+                            if (parseInt(slots.match(regex)[1]) === weekReducer.year && parseInt(slots.match(regex)[2] - 1) === weekReducer.monthNumber && parseInt(slots.match(regex)[3]) === dayNumbers[i % 8 - 1] && parseInt(slots.match(regex)[4]) === parseInt(actualHour) && parseInt(slots.match(regex)[5]) === actualMinute) {
                                 eventPlaced[i] = event.title
                                 bgEvent[i] = event.bgColor
                             }
