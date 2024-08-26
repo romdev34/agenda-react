@@ -52,7 +52,7 @@ export const eventSlice = createSlice({
 //todo ne pas sauvegarder l'event en date time et utiliser uniquement les slots start et end
 // pour calculer les slots des events
 // eventType 0 = event de type rdv eventType 1 = event de type memo
-                if (!event.allDayEvent && event.eventType === 0) {
+                if (event.eventType === 0) {
                     eventDays.push(startDateEvent.utc().format("YYYY-MM-DD HH:mm:ss"))
                     let dayEndDate = moment(event.start_date_event).utc().hour(event.hourTimeSlotEnd)
                     dayEndDate.minute(event.minuteTimeSlotEnd)
@@ -76,11 +76,11 @@ export const eventSlice = createSlice({
                         }
                     }
                 }
-                if (event.allDayEvent) {
-                    eventDays.push(startDateEvent.utc().format("YYYY-MM-DD"))
+                if (event.eventType === 1) {
+                    eventDays.push(startDateEvent.utc().format("DD-MM-YYYY"))
                     startDateEvent.add(1, 'd').date()
-                    while (startDateEvent.isBefore(moment(event.end_date_event), 'day')) {
-                        eventDays.push(startDateEvent.utc().format("YYYY-MM-DD"))
+                    while (startDateEvent.isBefore(moment(event.end_date_event), 'day') || startDateEvent.isSame(moment(event.end_date_event), 'day')) {
+                        eventDays.push(startDateEvent.utc().format("DD-MM-YYYY"))
                         startDateEvent.add(1, 'd').date()
                     }
                 }
