@@ -3,9 +3,8 @@ import moment from "moment";
 import {useEffect, useState} from 'react';
 
 export default function Memos({memos}) {
-    console.log(memos)
     let tag = []
-     tag["check"] = false
+    tag["check"] = false
     let memoCheck = false
 
     moment.locale('fr')
@@ -16,7 +15,7 @@ export default function Memos({memos}) {
                 memo["date"].map(function (memoDates) {
                     tag.push(
                         <div key={nanoid(8)}
-                             className={`${memo["bgColor"]} font-bold text-sm`}>{moment(memoDates, "DD-MM-YYYY").format("dddd") + " " + memo["title"] + "  "}</div>
+                             className={`${memo["bgColor"]} font-bold text-sm`}>{moment(memoDates, "DD-MM-YYYY").format("dddd") + " " + moment(memoDates, "DD-MM-YYYY").date() + " " + moment(memoDates, "DD-MM-YYYY").format("MMMM") + " " + memo["title"] + "  "}</div>
                     )
                 })
             }
@@ -29,7 +28,7 @@ export default function Memos({memos}) {
     return (
         <>
             {handleMemos(memos)['check'] && <div
-                className="overflow-y-scroll h-[100px]">Mémos <br/>{tag}
+                className="overflow-y-scroll max-h-[80px]">{tag}
             </div>}
         </>
     )

@@ -23,7 +23,7 @@ export default function Calendar() {
 
     return (
         <div>
-            <header className="items-center m-auto min-w-[703px] max-w-[1000px] flex mt-20">
+            <header className="items-center m-auto min-w-[703px] max-w-[1000px] flex mt-10">
                 <Header />
             </header>
             <main>

@@ -28,9 +28,8 @@ export default function DailyCalendar() {
                 actualMinute = 0
                 cases.push(
                     <div key={nanoid(8)}
-                         className="h-10 leading-10 bg-white border-r border-l border-t border-gray-300">
-                        <div
-                            className="relative bottom-[2px] text-sm">{("0" + (i / 2) / 2).slice(-2) + " h"}</div>
+                         className="leading-5 text-xs h-5 font-bold bg-white border-r border-l border-t border-gray-300">
+                        <div>{("0" + (i / 2) / 2).slice(-2) + " h"}</div>
                     </div>
                 )
             }
@@ -38,9 +37,8 @@ export default function DailyCalendar() {
                 actualHour = actualHour + 0.5
                 actualMinute = 30
                 cases.push(<div key={nanoid(8)}
-                                className="h-10 leading-10 bg-white border-r border-l border-t border-gray-300">
-                    <div
-                        className="relative bottom-[2px] text-sm">{("0" + halfHour).slice(-2) + " h 30"}</div>
+                                className="leading-5 text-xs h-5 font-bold bg-white border-r border-l border-t border-gray-300">
+                    <div>{("0" + halfHour).slice(-2) + " h 30"}</div>
                 </div>)
                 halfHour++
             }
@@ -69,7 +67,7 @@ export default function DailyCalendar() {
 
                 cases.push(
                     <div key={nanoid(8)}
-                         className={`${eventPlaced[i] ? `${bgEvent[i]} h-10 leading-10  border-r border-l border-b border-gray-300` : "h-10 leading-10 bg-white border-r border-l border-t border-gray-300"}`}>{eventPlaced[i]}</div>
+                         className={`${eventPlaced[i] ? `${bgEvent[i]} leading-5 text-sm h-5 font-bold   border-r border-l border-b border-gray-300` : "bg-white border-r border-l border-t border-gray-300"}`}>{eventPlaced[i]}</div>
                 )
             }
         }

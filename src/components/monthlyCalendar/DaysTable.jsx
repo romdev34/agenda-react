@@ -9,7 +9,6 @@ export default function DaysTable({
                                       active,
                                       actualMonthState,
                                       todayDay,
-
                                   }) {
 
     const [showModal, setShowModal] = useState(false)
@@ -63,7 +62,7 @@ export default function DaysTable({
             </div>}
 
             {showModal && createPortal(<Modal
-                    closeModal={() => setShowModal(!showModal)}/>,
+                    setShowModal={setShowModal}/>,
                 document.body)}
         </>
     )

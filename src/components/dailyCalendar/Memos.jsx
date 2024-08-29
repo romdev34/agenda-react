@@ -3,7 +3,6 @@ import moment from "moment";
 import {useEffect, useState} from 'react';
 
 export default function Memos({memos}) {
-    console.log(memos)
     let tag = []
      tag["check"] = false
 
@@ -28,7 +27,7 @@ export default function Memos({memos}) {
     return (
         <>
             {handleMemos(memos)['check'] && <div
-                className="overflow-y-scroll h-[100px]">Mémos <br/>{tag}
+                className="overflow-y-scroll max-h-[80px]">{tag}
             </div>}
         </>
     )

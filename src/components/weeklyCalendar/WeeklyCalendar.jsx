@@ -16,11 +16,11 @@ export default function WeeklyCalendar() {
     let cases = []
     let eventPlaced = []
     let memos = []
-
     let bgEvent = []
     let actualHour = -0.5
     let actualMinute = 0
     let memoCounter = 0
+    let monthNumber = 0
 
     function createWeeklyCalendar() {
         for (let i = 0; i < 384; i++) {
@@ -30,9 +30,8 @@ export default function WeeklyCalendar() {
                 actualMinute = 0
                 cases.push(
                     <div key={nanoid(8)}
-                         className="h-10 leading-10 bg-white border-r border-l border-b border-gray-300">
-                        <div
-                            className="relative bottom-[2px] text-sm">{("0" + (i / 8) / 2).slice(-2) + " h"}</div>
+                         className="leading-5 text-xs h-5 font-bold bg-white border-r border-l border-b border-gray-300">
+                        <div>{("0" + (i / 8) / 2).slice(-2) + " h"}</div>
                     </div>
                 )
             }
@@ -41,38 +40,50 @@ export default function WeeklyCalendar() {
                 actualMinute = 30
 
                 cases.push(<div key={nanoid(8)}
-                                className="h-10 leading-10  bg-white border-r border-l border-b border-gray-300">
-                        <div
-                            className="relative bottom-[2px] text-sm">{("0" + parseInt((i / 8) / 2)).slice(-2) + " h 30"}</div>
+                                className="leading-5 text-xs h-5 font-bold bg-white border-r border-l border-b border-gray-300">
+                        <div>{("0" + parseInt((i / 8) / 2)).slice(-2) + " h 30"}</div>
                     </div>
                 )
             }
+
             if ((i % 8 !== 0)) {
+                monthNumber = weekReducer.monthNumber
+                if ((i % 8 - 1 > 0) && dayNumbers[i % 8 - 1] > dayNumbers[0]) {
+                    monthNumber = weekReducer.monthNumber
+                }
+                if ((i % 8 - 1 > 0) && dayNumbers[i % 8 - 1] < dayNumbers[0]) {
+                    monthNumber = weekReducer.monthNumber + 1
+                }
+                // console.log(monthNumber)
                 memoCounter = 0
                 eventState.events.map(function (event) {
+
                     memos[event.id] = []
                     memos[event.id]["date"] = []
                     event.eventsDaysSlots.map(function (slots, index, array) {
                         if (event.eventType === 0) {
-                            if (parseInt(slots.match(regex)[1]) === weekReducer.year && parseInt(slots.match(regex)[2] - 1) === weekReducer.monthNumber && parseInt(slots.match(regex)[3]) === dayNumbers[i % 8 - 1] && parseInt(slots.match(regex)[4]) === parseInt(actualHour) && parseInt(slots.match(regex)[5]) === actualMinute) {
+                            if (parseInt(slots.match(regex)[1]) === weekReducer.year && parseInt(slots.match(regex)[2] - 1) === monthNumber && parseInt(slots.match(regex)[3]) === dayNumbers[i % 8 - 1] && parseInt(slots.match(regex)[4]) === parseInt(actualHour) && parseInt(slots.match(regex)[5]) === actualMinute) {
                                 eventPlaced[i] = event.title
                                 bgEvent[i] = event.bgColor
                             }
+
                         } else {
                             let weekNumber = moment(slots, "DD-MM-YYYY").isoWeek()
-                            if (parseInt(slots.match(regex1)[3]) === weekReducer.year  && weekNumber === weekReducer.weekNumber) {
-                                memos[event.id]['date'][index]= slots
-                                memos[event.id]['title']= event.title
-                                memos[event.id]['bgColor']= event.bgColor
+                            if (parseInt(slots.match(regex1)[3]) === weekReducer.year && weekNumber === weekReducer.weekNumber) {
+                                memos[event.id]['date'][index] = slots
+                                memos[event.id]['title'] = event.title
+                                memos[event.id]['bgColor'] = event.bgColor
                             }
                         }
                     })
                 })
                 cases.push(
                     <div key={nanoid(8)}
-                         className={`${eventPlaced[i] ? `${bgEvent[i]} h-10 leading-10  border-r border-l border-b border-gray-300` : " h-10 leading-10  border-r border-l border-b border-gray-300"}`}>{eventPlaced[i]}</div>
+                         className={`${eventPlaced[i] ? `${bgEvent[i]} leading-5 text-sm h-5 font-bold  border-r border-l border-b border-gray-300` : " h-5 leading-10  border-r border-l border-b border-gray-300"}`}>{eventPlaced[i]}</div>
                 )
-
+                if (dayNumbers[i % 8 - 1] < dayNumbers[0]) {
+                    monthNumber = weekReducer.monthNumber
+                }
 
             }
 
