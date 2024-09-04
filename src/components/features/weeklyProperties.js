@@ -30,7 +30,6 @@ export const weekSlice = createSlice({
     initialState,
     reducers: {
         toPreviousWeek: (state) => {
-            console.log(monthNumber)
             const daysArray = []
             state.compteur -=1
             if (state.compteur > 0) {
@@ -47,8 +46,8 @@ export const weekSlice = createSlice({
                 state.disableButton = false
                 state.weekNumber = moment().subtract(Math.abs(state.compteur), "w").isoWeek()
                 state.year = moment().subtract(Math.abs(state.compteur), 'w').year()
-                state.monthName = moment(state.year + '-' +  (monthNumber +1) + '-' + dayNumbers[0]).subtract(Math.abs(state.compteur), "w").month("M").format("MMMM")
-                state.monthNumber = moment(state.year + '-' +  (monthNumber +1) + '-' + dayNumbers[0]).subtract(Math.abs(state.compteur), "w").month()
+                state.monthName = moment(state.year.toString() + '-' +  ("0" +(monthNumber +1)).slice(-2) + '-' + ("0" + dayNumbers[0]).slice(-2)).subtract(Math.abs(state.compteur).toString(), "w").month("M").format("MMMM")
+                state.monthNumber = moment(state.year + '-' +  ("0" +(monthNumber +1)).slice(-2) + '-' + ("0" + dayNumbers[0]).slice(-2)).subtract(Math.abs(state.compteur), "w").month()
                 for (let i = 0; i < 7; i++) {
                     daysArray.push(moment().subtract(Math.abs(state.compteur), "w").weekday(i).date())
                 }

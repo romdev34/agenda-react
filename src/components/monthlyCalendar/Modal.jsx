@@ -3,16 +3,17 @@ import {nanoid} from "nanoid";
 import axios from "axios";
 import {useSelector} from "react-redux";
 import moment from "moment";
+import monthReducer from "../features/monthProperties.js";
 // eslint-disable-next-line react/prop-types
-export default function Modal({setShowModal}) {
+export default function Modal({setShowModal, year, month, day}) {
     moment.locale('fr')
     const regex1 = /(\d+-\d+-\d+)/
     let url = ""
     let payload = {
         title: "",
         details: "",
-        start_date_event: "",
-        end_date_event: "",
+        startDateEvent: "",
+        endDateEvent: "",
         hourTimeSlotStart: null,
         minuteTimeSlotStart: null,
         hourTimeSlotEnd: null,
@@ -23,17 +24,34 @@ export default function Modal({setShowModal}) {
     const [type, setType] = useState(0)
     const [title, setTitle] = useState("")
     const [details, setDetails] = useState("")
-    const [startDateEvent, setStartDateEvent] = useState("")
+    const [startDateEvent, setStartDateEvent] = useState(year + "-" + ("0" + (month + 1)).slice(-2) + "-" + ("0" + day).slice(-2))
     const [hourTimeSlotStart, setHourTimeSlotStart] = useState("00")
     const [minuteTimeSlotStart, setMinuteTimeSlotStart] = useState("00")
-    const [endDateEvent, setEndDateEvent] = useState("")
+    const [endDateEvent, setEndDateEvent] = useState(year + "-" + ("0" + (month + 1)).slice(-2) + "-" + ("0" + day).slice(-2))
     const [hourTimeSlotEnd, setHourTimeSlotEnd] = useState("00")
     const [minuteTimeSlotEnd, setMinuteTimeSlotEnd] = useState("00")
     let errors = []
+    let slots = []
+    let errorAvailability = ""
 
     const eventState = useSelector(state => state.eventReducer)
 
     const [formErrors, setFormErrors] = useState([])
+
+    function calculSlots() {
+        let t1 = moment(startDateEvent + " " + hourTimeSlotStart + ":" + minuteTimeSlotStart)
+        let t2 = moment(endDateEvent + " " + ("0" + hourTimeSlotEnd).slice(-2) + ":" + ("0" + minuteTimeSlotEnd).slice(-2))
+
+        while (t2.isAfter(t1, "m")) {
+            slots.push(t1.year() + "-" + ("0" + (t1.month() + 1)).slice(-2) + "-" + ("0" + t1.date()).slice(-2) + " " + ("0" + t1.hour()).slice(-2) + ":" + ("0" + t1.minute()).slice(-2) + ":" + "00")
+            t1.add(30, "minutes")
+            if (t1.hour() === parseInt(hourTimeSlotEnd) && t1.minute() === parseInt(minuteTimeSlotEnd)) {
+                t1.add(1, "day")
+                t1.hour(hourTimeSlotStart)
+                t1.minute(minuteTimeSlotStart)
+            }
+        }
+    }
 
     // console.log(eventState.events)
     function handleSubmit(e) {
@@ -42,31 +60,38 @@ export default function Modal({setShowModal}) {
         payload.eventType = parseInt(type)
         payload.title = title
         payload.details = details
-        payload.start_date_event = startDateEvent
+        payload.startDateEvent = startDateEvent
         payload.hourTimeSlotStart = hourTimeSlotStart
         payload.minuteTimeSlotStart = minuteTimeSlotStart
-        payload.end_date_event = endDateEvent
+        payload.endDateEvent = endDateEvent
         payload.hourTimeSlotEnd = hourTimeSlotEnd
         payload.minuteTimeSlotEnd = minuteTimeSlotEnd
-
-        eventState.events.map(function (event) {
-
-            if (event.eventType === 0 && parseInt(type) === 0 &&
-                (event.end_date_event.match(regex1)[1] >= startDateEvent && endDateEvent >= event.start_date_event.match(regex1)[1] || event.start_date_event.match(regex1)[1] <= endDateEvent && startDateEvent <= event.end_date_event.match(regex1)[1])
-                && (
-                    (event.hourTimeSlotEnd > hourTimeSlotStart && hourTimeSlotEnd > event.hourTimeSlotStart || event.hourTimeSlotStart < hourTimeSlotEnd && hourTimeSlotStart < event.hourTimeSlotEnd)
-                    || ((event.hourTimeSlotStart === hourTimeSlotEnd && event.minuteTimeSlotStart === minuteTimeSlotEnd) || (event.hourTimeSlotStart === hourTimeSlotStart && event.minuteTimeSlotStart === minuteTimeSlotStart) || (event.hourTimeSlotEnd === hourTimeSlotEnd && event.minuteTimeSlotEnd === minuteTimeSlotEnd) || (event.hourTimeSlotEnd === hourTimeSlotStart && event.minuteTimeSlotEnd === minuteTimeSlotStart))
-                )
-            ) {
-                console.log(event.id)
-            }
-        })
+        calculSlots()
+        if (event.eventType === 0) {
+            eventState.events.map(function (event) {
+                if (event.eventType === 0) {
+                    event.eventsDaysSlots.map(function (slot) {
+                        if (slots.find((element) => element === slot)) {
+                            errorAvailability = 'Ce créneau est deja pris à ces dates par l\'evenement "' + event.title + '"'
+                        }
+                    })
+                }
+            })
+        }
+        if (errorAvailability) {
+            errors.push(errorAvailability)
+        }
 
         if (startDateEvent > endDateEvent) {
-            errors.push('date de début supérieure a date de fin')
+            errors.push(<div>date de début supérieure a date de fin<br/></div>)
         }
-        if(startDateEvent ==="" || endDateEvent === "") {
-            errors.push("Vous devez remplir une date de début et de fin")
+        if (startDateEvent === "" || endDateEvent === "") {
+            errors.push(<div>Vous devez remplir une date de début et de fin<br/>
+            </div>)
+        }
+        if (title === "") {
+            errors.push(<div>Vous devez indiquer le titre de l'évenement<br/>
+            </div>)
         }
         if (parseInt(type) === 0 && (hourTimeSlotStart > hourTimeSlotEnd || (hourTimeSlotStart === hourTimeSlotEnd && minuteTimeSlotStart >= minuteTimeSlotEnd))) {
             errors.push(<div key={nanoid(8)}> l'heure de début doit etre
@@ -74,20 +99,20 @@ export default function Modal({setShowModal}) {
         }
         setFormErrors([errors])
 
-        if (errors.length >= 0) {
+        if (errors.length > 0) {
             e.preventDefault()
         }
+        console.log(errors)
         if (errors.length === 0) {
-            hourTimeSlotEnd
             axios.post(url, payload, {
                 headers: {
                     "Content-Type": "application/ld+json",
                     "Authorization": `Bearer ${localStorage.getItem('token')}`
                 }
             })
-                .then((response) => console.log(response))
+                .then((response) => window.location.reload())
                 .catch((error) => console.error(error));
-            window.location.reload();
+
         }
 
     }
@@ -143,7 +168,9 @@ export default function Modal({setShowModal}) {
                    type="text" id="details"/>
             <br/>
             <div>
-                <label className="bg-gray-300 w-[119px] inline-block pl-1 rounded" htmlFor="startDateEvent">Date de
+                <label
+                    className="bg-gray-300 w-[119px] inline-block pl-1 rounded"
+                    htmlFor="startDateEvent">Date de
                     début : </label>
                 <input onChange={(e) => setStartDateEvent(e.target.value)}
                        value={startDateEvent} className="p-1 w-[115px] mr-1"
@@ -163,10 +190,13 @@ export default function Modal({setShowModal}) {
                 </select>}
             </div>
             <div>
-                <label className="bg-gray-300 w-[119px] inline-block pl-1 rounded" htmlFor="endDateEvent">Date de
+                <label
+                    className="bg-gray-300 w-[119px] inline-block pl-1 rounded"
+                    htmlFor="endDateEvent">Date de
                     fin : </label>
                 <input onChange={(e) => setEndDateEvent(e.target.value)}
-                       value={endDateEvent} className="p-1 w-[115px] mr-1" id="endDateEvent"
+                       value={endDateEvent} className="p-1 w-[115px] mr-1"
+                       id="endDateEvent"
                        type="date"/>
 
                 {parseInt(type) === 0 &&

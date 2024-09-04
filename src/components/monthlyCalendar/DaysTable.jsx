@@ -1,10 +1,13 @@
 import {createPortal} from "react-dom";
 import Modal from "./Modal.jsx";
+import EventModal from "./EventModal.jsx";
 import {useState} from "react";
 import {nanoid} from "nanoid";
 
 export default function DaysTable({
                                       eventDetails,
+                                      year,
+                                      month,
                                       dayNumber,
                                       active,
                                       actualMonthState,
@@ -12,6 +15,8 @@ export default function DaysTable({
                                   }) {
 
     const [showModal, setShowModal] = useState(false)
+    const [showEditEventModal, setShowEditEventModal] = useState(false)
+    const [eventId, setEventId] = useState("")
     let tag = []
     return (
         <>
@@ -24,16 +29,13 @@ export default function DaysTable({
                 <div
                     className="flex flex-col">{eventDetails.length ? eventDetails.map(function (event, index, array) {
                     tag = []
-                    // if (index === 0) {
-                    //     if (array.length - 1 <= event.position) {
-                    //         for (let i = 1; i < event.position; i++) {
-                    //             tag.push(<div className="opacity-0 mb-1"
-                    //                           key={nanoid(8)}>{index}</div>)
-                    //         }
-                    //     }
-                    // }
-                    return ([tag, <div className={`text-sm mb-1 ${event.bgColor}`}
-                                       key={nanoid(8)}>{event.title}</div>])
+                    return ([tag,
+                        <div onClick={
+                            function() {
+                                setEventId(event.id)
+                                setShowEditEventModal(!showEditEventModal)
+                            }} className={`cursor-pointer text-sm mb-1 ${event.bgColor}`}
+                             key={nanoid(8)}>{event.title}</div>])
                 }) : ""}</div>
             </div>}
 
@@ -44,25 +46,24 @@ export default function DaysTable({
                 <br/>
 
                 <div
-                    className="flex flex-col">{eventDetails.length ? eventDetails.map(function (event, index, array) {
+                    className="flex flex-col">{eventDetails.length ? eventDetails.map(function (event) {
                     tag = []
-
-                    // if (index === 0) {
-                    //     if (array.length - 1 <= event.position) {
-                    //         for (let i = 1; i < event.position; i++) {
-                    //             tag.push(<div className="opacity-0 mb-1"
-                    //                           key={nanoid(8)}>{index}</div>)
-                    //         }
-                    //     }
-                    // }
-
-                    return ([tag, <div className={`text-sm mb-1 ${event.bgColor}`}
-                                       key={nanoid(8)}>{event.title}</div>])
+                    return ([tag,
+                        <div onClick={
+                            function() {
+                                setEventId(event.id)
+                                 setShowEditEventModal(!showEditEventModal)
+                        }} className={`cursor-pointer text-sm mb-1 ${event.bgColor}`}
+                             key={nanoid(8)}>{event.title}</div>])
                 }) : ""}</div>
             </div>}
 
             {showModal && createPortal(<Modal
-                    setShowModal={setShowModal}/>,
+                    setShowModal={setShowModal} eventId={eventId} year={year} month={month} day={dayNumber}/>,
+                document.body)}
+
+            {showEditEventModal && createPortal(<EventModal
+                    setShowEditEventModal={setShowEditEventModal} eventDetails={eventDetails} eventId={eventId} year={year} month={month} day={dayNumber}/>,
                 document.body)}
         </>
     )

@@ -8,13 +8,15 @@ export default function MonthlyCalendar() {
     // console.log(eventState)
     const monthReducerState = useSelector(state => state.monthReducer)
     const todayDate = new Date()
-    const daysNumbers = [];
+    let daysNumbers = [];
     let j = 1;
     let k = 1;
     let l = 1;
     let events = []
     let numberOfEventsInADay = 0
+
     for (let i = 1; i < 43; i++) {
+
         events = []
         // je pars du principe que 1 = lundi
         if (i < monthReducerState.firstDayNumber) {
@@ -31,33 +33,41 @@ export default function MonthlyCalendar() {
             if (eventState.events) {
 
                 eventState.events.map(function (event) {
-
-                        const startDateEvent = moment(new Date(event.start_date_event));
-                        const endDateEvent = moment(new Date(event.end_date_event));
+                        const startDateEvent = moment(new Date(event.startDateEvent));
+                        const endDateEvent = moment(new Date(event.endDateEvent));
                         const actualDayDate = moment(new Date(monthReducerState.year, monthReducerState.monthNumber, j, '0', '0', '0'));
                         // si le start date de l'event fait partie de la date du jour parcouru on rajoute les details
                         if (actualDayDate.isSame(startDateEvent, 'day')) {
                             numberOfEventsInADay++
                             events.push({
                                 id: event.id,
+                                type: event.eventType,
+                                startDateEvent: event.startDateEvent,
+                                hourTimeSlotStart: event.hourTimeSlotStart,
+                                minuteTimeSlotStart: event.minuteTimeSlotStart,
+                                hourTimeSlotEnd: event.hourTimeSlotEnd,
+                                minuteTimeSlotEnd: event.minuteTimeSlotEnd,
+                                endDateEvent: event.endDateEvent,
                                 title: event.title,
                                 details: event.details,
-                                priority: event.priority,
                                 bgColor: event.bgColor,
-                                position: numberOfEventsInADay++
                             })
                         }
-                        // console.log(actualDayDate.getDate())
                         //si le jour de la date de fin de l'event est supérieure ou égale au jour de la date du jour parcourue et si la date du jour parcourue est supérieure à la date de début de l'event
                         if ((endDateEvent.isAfter(actualDayDate, 'day') || endDateEvent.isSame(actualDayDate, 'day')) && actualDayDate.isAfter(startDateEvent, 'day')) {
                             numberOfEventsInADay++
                             events.push({
                                 id: event.id,
+                                type: event.eventType,
+                                startDateEvent: event.startDateEvent,
+                                hourTimeSlotStart: event.hourTimeSlotStart,
+                                minuteTimeSlotStart: event.minuteTimeSlotStart,
+                                hourTimeSlotEnd: event.hourTimeSlotEnd,
+                                minuteTimeSlotEnd: event.minuteTimeSlotEnd,
+                                endDateEvent: event.endDateEvent,
                                 title: event.title,
                                 details: event.details,
-                                priority: event.priority,
                                 bgColor: event.bgColor,
-                                position: numberOfEventsInADay
                             })
                         }
                     }
@@ -75,6 +85,7 @@ export default function MonthlyCalendar() {
             j++
             l += 1
         }
+
 
         if (i >= l) {
             daysNumbers.push({
@@ -117,6 +128,7 @@ export default function MonthlyCalendar() {
                 {daysNumbers.map(day => {
                         return <DaysTable key={nanoid(8)}
                                           month={day.month}
+                                          year={monthReducerState.year}
                                           actualMonthState={monthReducerState.actualMonth}
                                           dayNumber={day.day}
                                           eventDetails={day.eventDetails}

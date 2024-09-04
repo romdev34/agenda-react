@@ -5,11 +5,14 @@ import {useEffect, useState} from "react";
 import {useDispatch} from "react-redux";
 import {updateEvents} from "./components/features/events.js";
 import spinner from './assets/spinner.svg'
-
+import {createPortal} from "react-dom";
+import ModalConnexion from "./components/layout/ModalConnexion.jsx";
 
 function App() {
 
     const dispatch = useDispatch();
+
+    const [displayModalConnexion, setDisplayModalConnexion] = useState(false)
 
     const [ApiState, setApiState] = useState(
         {
@@ -50,49 +53,25 @@ function App() {
 
     const [isLogged, setIsLogged] = useState(checkIsLogged)
 
-    const credentialsObject = {
-        email: "test3@test.com",
-        password: "test3"
-    }
-    const [credentials, setCredentials] = useState(credentialsObject)
-
-    function handleLoginApi() {
-        setApiState({...ApiState, loading: true})
-        axios.post('http://localhost:8080/api/login', credentials)
-            .then(function (res) {
-                setApiState({...ApiState, loading: false})
-                localStorage.setItem('token', res.data.token)
-                if (localStorage.getItem('token')) {
-                    setIsLogged(true)
-                }
-            })
-            .catch(error => console.log(error.response.data.message))
-            .then(function (res) {
-                axios.get('http://localhost:8080/api/events', {headers: {"Authorization": `Bearer ${localStorage.getItem('token')}`}})
-                    .then(function (res) {
-                        setApiState({...ApiState, loading: false})
-                        dispatch(updateEvents(res.data["hydra:member"]))
-                    })
-                    .catch(error => {
-                        console.log(error.response.data.message)
-                    })
-            })
-            .catch(error => {
-                console.log(error.response.data.message)
-            })
-    }
-
+    // const credentialsObject = {
+    //     email: "test3@test.com",
+    //     password: "test3"
+    // }
 
     return (
         <>
             <h1 className="text-5xl">Mon agenda en react</h1>
             {content}
             {!isLogged && <div className=" m-auto min-w-[703px] max-w-[1000px]">
-                <button onClick={handleLoginApi}
+                <button onClick={() => setDisplayModalConnexion(!displayModalConnexion)}
                         className="text-white block ml-auto rounded p-2 bg-blue-600 hover:bg-blue-800">Connexion
                 </button>
             </div>}
             <Calendar/>
+
+            {displayModalConnexion && createPortal(<ModalConnexion
+                    setDisplayModalConnexion={setDisplayModalConnexion} apiState={ApiState} setIsLogged={setIsLogged} setApiState={setApiState}/>,
+                document.body)}
         </>
     )
 }

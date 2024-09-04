@@ -21,7 +21,6 @@ let eventsDaysSlots = []
 let startDateEvent = []
 let endDateEvent = []
 let eventDays = []
-let position = 1
 let daySlotIndice = 0
 
 export const eventSlice = createSlice({
@@ -30,10 +29,10 @@ export const eventSlice = createSlice({
     reducers: {
         updateEvents: (state, actions) => {
             actions.payload.sort((a, b) => {
-                if (a.start_date_event < b.start_date_event) {
+                if (a.startDateEvent < b.startDateEvent) {
                     return -1;
                 }
-                if (a.start_date_event > b.start_date_event) {
+                if (a.startDateEvent > b.startDateEvent) {
                     return 1;
                 }
             })
@@ -42,10 +41,10 @@ export const eventSlice = createSlice({
                 eventDays = []
                 daySlotIndice = 0
                 // state.eventsDaysSlots["position"] = position
-                startDateEvent = moment(event.start_date_event)
+                startDateEvent = moment(event.startDateEvent)
                 startDateEvent.utc().hour(event.hourTimeSlotStart)
                 startDateEvent.minute(event.minuteTimeSlotStart)
-                endDateEvent = moment(event.end_date_event)
+                endDateEvent = moment(event.endDateEvent)
                 endDateEvent.utc().hour(event.hourTimeSlotEnd)
                 endDateEvent.minute(event.minuteTimeSlotEnd)
 
@@ -54,7 +53,7 @@ export const eventSlice = createSlice({
 // eventType 0 = event de type rdv eventType 1 = event de type memo
                 if (event.eventType === 0) {
                     eventDays.push(startDateEvent.utc().format("YYYY-MM-DD HH:mm:ss"))
-                    let dayEndDate = moment(event.start_date_event).utc().hour(event.hourTimeSlotEnd)
+                    let dayEndDate = moment(event.startDateEvent).utc().hour(event.hourTimeSlotEnd)
                     dayEndDate.minute(event.minuteTimeSlotEnd)
                     dayEndDate.subtract(30, "m")
                     if (!dayEndDate.isSame(startDateEvent, "m")) {
@@ -64,10 +63,10 @@ export const eventSlice = createSlice({
 
                             if (startDateEvent.isSame(dayEndDate, "m")) {
                                 daySlotIndice++
-                                dayEndDate = moment(event.start_date_event).utc().hour(event.hourTimeSlotEnd).minute(event.minuteTimeSlotEnd)
+                                dayEndDate = moment(event.startDateEvent).utc().hour(event.hourTimeSlotEnd).minute(event.minuteTimeSlotEnd)
                                 dayEndDate.subtract(30, "m")
                                 dayEndDate.add(daySlotIndice, 'day')
-                                startDateEvent = moment(event.start_date_event)
+                                startDateEvent = moment(event.startDateEvent)
                                 startDateEvent.utc().hour(event.hourTimeSlotStart)
                                 startDateEvent.minute(event.minuteTimeSlotStart)
                                 startDateEvent.add(daySlotIndice, 'day')
@@ -79,7 +78,7 @@ export const eventSlice = createSlice({
                 if (event.eventType === 1) {
                     eventDays.push(startDateEvent.utc().format("DD-MM-YYYY"))
                     startDateEvent.add(1, 'd').date()
-                    while (startDateEvent.isBefore(moment(event.end_date_event), 'day') || startDateEvent.isSame(moment(event.end_date_event), 'day')) {
+                    while (startDateEvent.isBefore(moment(event.endDateEvent), 'day') || startDateEvent.isSame(moment(event.endDateEvent), 'day')) {
                         eventDays.push(startDateEvent.utc().format("DD-MM-YYYY"))
                         startDateEvent.add(1, 'd').date()
                     }
@@ -90,7 +89,6 @@ export const eventSlice = createSlice({
                     bgColor: colors[index % 10],
                 }
                 state.events.push(eventWithBg)
-                position++
             })
         },
 
