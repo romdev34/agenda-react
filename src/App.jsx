@@ -9,7 +9,6 @@ import {createPortal} from "react-dom";
 import ModalConnexion from "./components/layout/ModalConnexion.jsx";
 
 function App() {
-
     const dispatch = useDispatch();
 
     const [displayModalConnexion, setDisplayModalConnexion] = useState(false)
@@ -32,7 +31,7 @@ function App() {
     useEffect(() => {
         setApiState({...ApiState, loading: true})
         if (checkIsLogged) {
-            axios.get('http://localhost:' + import.meta.env.VITE_API_PORT +'/api/events', {headers: {"Authorization": `Bearer ${localStorage.getItem('token')}`}})
+            axios.get(import.meta.env.VITE_API_EVENTS_URL , {headers: {"Authorization": `Bearer ${localStorage.getItem('token')}`}})
                 .then(function (res) {
                     setApiState({...ApiState, loading: false})
                     dispatch(updateEvents(res.data["hydra:member"]))
