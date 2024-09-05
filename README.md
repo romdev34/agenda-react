@@ -7,18 +7,16 @@ Currently, two official plugins are available:
 - [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
 - [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
 
-### Lancer le container
-docker compose up
+### creation de l'image
+docker build --no-cache . --tag ulysse699/agenda-react:1.0
 
-### si besoin de réinstaller les modules
-docker exec -ti agenda npm install
+### installer les vendors en local (idem pour installer un vendor en particulier)
+docker run -ti --rm --name agenda  -v $(pwd):/app -p 8012:8012 ulysse699/agenda-react:1.0  npm install
 
-### si problème de dépendences entre les modules on rajoute cela dans le Dockerfile
-npm config set legacy-peer-deps true
+### Lancer le projet en local
+docker run -ti --rm --name agenda -v $(pwd):/app -p 8012:8012 ulysse699/agenda-react:1.0  npm run dev
 
-Puis on relance
-docker exec -ti agenda npm install
+### Lancer le projet sur le serveur
+docker run -ti --rm --name agenda -v $(pwd):/app -p 8012:8012 ulysse699/agenda-react:1.0  npm run preview
 
-Pour créer le build jouer par exemple
-docker exec -ti agenda npm run build
-
+### créer un fichier .env.local à la racine du projet et modifier le port de l'API
