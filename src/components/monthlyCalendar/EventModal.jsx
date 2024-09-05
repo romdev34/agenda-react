@@ -86,7 +86,7 @@ export default function Modal({
     }
 
     function handleSubmit(e) {
-        url = import.meta.env.VITE_API_EVENTS_URL + eventId
+        url = import.meta.env.VITE_API_EVENTS_URL + '/' + eventId
         payload.eventType = parseInt(typeState)
         payload.title = titleState
         payload.details = detailsState
@@ -140,7 +140,7 @@ export default function Modal({
     }
 
     function removeEvent(e) {
-        url = import.meta.env.VITE_API_EVENTS_URL + eventId
+        url = import.meta.env.VITE_API_EVENTS_URL + '/' +eventId
         axios.delete(url, {
             headers: {
                 "Content-Type": "application/ld+json",

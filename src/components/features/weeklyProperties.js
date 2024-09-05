@@ -35,8 +35,8 @@ export const weekSlice = createSlice({
             if (state.compteur > 0) {
                 state.disableButton = false
                 state.year = moment().add(state.compteur, 'w').year()
-                state.monthName = moment(state.year + '-' +  (monthNumber +1) + '-' + dayNumbers[0]).add(state.compteur , "w").month("M").format("MMMM")
-                state.monthNumber = moment(state.year + '-' +  (monthNumber+1) + '-' + dayNumbers[0]).add(state.compteur , "w").month()
+                state.monthName = moment(state.year + '-' + ("0" + (monthNumber +1)).slice(-2) + '-' + ("0" + dayNumbers[0]).slice(-2)).add(state.compteur , "w").month("M").format("MMMM")
+                state.monthNumber = moment(state.year + '-' + ("0" + (monthNumber+1)).slice(-2) + '-' + ("0" + dayNumbers[0]).slice(-2)).add(state.compteur , "w").month()
                 state.weekNumber = moment().add(state.compteur , "w").isoWeek()
                 for (let i = 0; i < 7; i++) {
                     daysArray.push(moment().add(state.compteur , "w").weekday(i).date())
@@ -84,8 +84,8 @@ export const weekSlice = createSlice({
                 state.disableButton = false
                 state.weekNumber = moment().add(state.compteur , "w").isoWeek()
                 state.year = moment().add(state.compteur, 'w').year()
-                state.monthName = moment(state.year + '-' +  (monthNumber +1) + '-' + dayNumbers[0]).add(state.compteur, "w").month("M").format("MMMM")
-                state.monthNumber = moment(state.year + '-' +  (monthNumber +1) + '-' + dayNumbers[0]).add(state.compteur, "w").month()
+                state.monthName = moment(state.year + '-' + ("0" + (monthNumber +1)).slice(-2) + '-' + ("0" + dayNumbers[0]).slice(-2)).add(state.compteur, "w").month("M").format("MMMM")
+                state.monthNumber = moment(state.year + '-' + ("0" + (monthNumber +1)).slice(-2) + '-' + ("0" + dayNumbers[0]).slice(-2)).add(state.compteur, "w").month()
                 for (let i = 0; i < 7; i++) {
                     daysArray.push(moment().add(state.compteur, "w").weekday(i).date())
                 }

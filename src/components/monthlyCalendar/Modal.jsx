@@ -67,7 +67,7 @@ export default function Modal({setShowModal, year, month, day}) {
         payload.hourTimeSlotEnd = hourTimeSlotEnd
         payload.minuteTimeSlotEnd = minuteTimeSlotEnd
         calculSlots()
-        if (event.eventType === 0) {
+        if (type === 0) {
             eventState.events.map(function (event) {
                 if (event.eventType === 0) {
                     event.eventsDaysSlots.map(function (slot) {
@@ -102,7 +102,6 @@ export default function Modal({setShowModal, year, month, day}) {
         if (errors.length > 0) {
             e.preventDefault()
         }
-        console.log(errors)
         if (errors.length === 0) {
             axios.post(url, payload, {
                 headers: {
@@ -218,6 +217,5 @@ export default function Modal({setShowModal, year, month, day}) {
                     type="submit">Valider
             </button>
         </div>
-
     </form>)
 }
