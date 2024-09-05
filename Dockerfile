@@ -9,9 +9,7 @@ WORKDIR /app
 COPY . .
 
 # npm install et install serve for the static server
+RUN npm config set legacy-peer-deps true
 
 RUN npm install
 
-EXPOSE 8080
-
-CMD [ "npm", "run", "dev" ]
