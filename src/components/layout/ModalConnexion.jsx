@@ -10,7 +10,7 @@ export default function ModalConnexion({
                                            ApiState,
                                            setIsLogged
                                        }) {
-    const url = "http://localhost:8080/api/login"
+    const url = "http://localhost:" + import.meta.env.VITE_API_PORT + "/api/login"
     const dispatch = useDispatch();
     const payload = {}
     const [email, setEmail] = useState("")
@@ -34,7 +34,7 @@ export default function ModalConnexion({
                 setApiState({...ApiState, loading: false})
             })
             .then(function (res) {
-                axios.get('http://localhost:8080/api/events', {headers: {"Authorization": `Bearer ${localStorage.getItem('token')}`}})
+                axios.get('http://localhost:' + import.meta.env.VITE_API_PORT + '/api/events', {headers: {"Authorization": `Bearer ${localStorage.getItem('token')}`}})
                     .then(function (res) {
                         setApiState({...ApiState, loading: false})
                         setDisplayModalConnexion(false)

@@ -56,7 +56,7 @@ export default function Modal({setShowModal, year, month, day}) {
     // console.log(eventState.events)
     function handleSubmit(e) {
         errors = []
-        url = "http://localhost:8080/api/events"
+        url = "http://localhost:" + import.meta.env.VITE_API_PORT + "/api/events"
         payload.eventType = parseInt(type)
         payload.title = title
         payload.details = details

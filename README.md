@@ -10,13 +10,20 @@ Currently, two official plugins are available:
 ### creation de l'image
 docker build --no-cache . --tag ulysse699/agenda-react:1.0
 
+
+## Etapes obligatoires
+
 ### installer les vendors en local (idem pour installer un vendor en particulier)
 docker run -ti --rm --name agenda  -v $(pwd):/app -p 8012:8012 ulysse699/agenda-react:1.0  npm install
 
-### Lancer le projet en local
+### Lancer le projet en local (sI dev local)
 docker run -ti --rm --name agenda -v $(pwd):/app -p 8012:8012 ulysse699/agenda-react:1.0  npm run dev
 
-### Lancer le projet sur le serveur
-docker run -ti --rm --name agenda -v $(pwd):/app -p 8012:8012 ulysse699/agenda-react:1.0  npm run preview
+### Création du dossier dist (si projet deployé)
+docker run -it --rm  --name agenda -v $(pwd):/app ulysse699/agenda-react:1.0 npm run build
 
-### créer un fichier .env.local à la racine du projet et modifier le port de l'API
+
+### Lancer le projet sur le serveur (si projet deployé)
+`docker run -ti --rm --name agenda -v $(pwd):/app -p 8012:8012 ulysse699/agenda-react:1.0  npm run preview`
+
+### créer un fichier .env.local à la racine du projet (local et serveur si besoin de config particulière)

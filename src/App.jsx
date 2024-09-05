@@ -32,7 +32,7 @@ function App() {
     useEffect(() => {
         setApiState({...ApiState, loading: true})
         if (checkIsLogged) {
-            axios.get('http://localhost:8080/api/events', {headers: {"Authorization": `Bearer ${localStorage.getItem('token')}`}})
+            axios.get('http://localhost:' + import.meta.env.VITE_API_PORT +'/api/events', {headers: {"Authorization": `Bearer ${localStorage.getItem('token')}`}})
                 .then(function (res) {
                     setApiState({...ApiState, loading: false})
                     dispatch(updateEvents(res.data["hydra:member"]))
