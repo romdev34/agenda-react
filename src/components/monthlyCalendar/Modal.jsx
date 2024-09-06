@@ -66,6 +66,8 @@ export default function Modal({setShowModal, year, month, day}) {
         payload.endDateEvent = endDateEvent
         payload.hourTimeSlotEnd = hourTimeSlotEnd
         payload.minuteTimeSlotEnd = minuteTimeSlotEnd
+        payload.updatedAt = moment().format('YYYY-MM-DDTHH:mm:ss')
+        payload.createdAt = moment().format('YYYY-MM-DDTHH:mm:ss')
         calculSlots()
         if (type === 0) {
             eventState.events.map(function (event) {

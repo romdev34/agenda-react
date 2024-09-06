@@ -3,6 +3,7 @@ import trash from '/src/assets/trash.png'
 import axios from "axios";
 import {useSelector} from "react-redux";
 import moment from "moment";
+import 'moment/dist/locale/fr';
 import monthReducer from "../features/monthProperties.js";
 import {nanoid} from "nanoid";
 // eslint-disable-next-line react/prop-types
@@ -16,7 +17,7 @@ export default function Modal({
                               }) {
     moment.locale('fr')
     const eventState = useSelector(state => state.eventReducer)
-
+    console.log(moment().format("YYYY-MM-DDTHH:mm:ss"))
 
     const regex1 = /(\d+-\d+-\d+)/
     let url = ""
@@ -43,6 +44,7 @@ export default function Modal({
     let hourTimeSlotEnd = ""
     let minuteTimeSlotStart = ""
     let minuteTimeSlotEnd = ""
+    let createdAt = null
     const [formErrors, setFormErrors] = useState([])
 
     eventDetails.map(function (event) {
@@ -56,9 +58,9 @@ export default function Modal({
             hourTimeSlotEnd = event.hourTimeSlotEnd
             minuteTimeSlotStart = event.minuteTimeSlotStart
             minuteTimeSlotEnd = event.minuteTimeSlotEnd
+            createdAt = event.createdAt
         }
     })
-    // console.log(eventDetails)
     const [typeState, setTypeState] = useState(type)
     const [titleState, setTitleState] = useState(title)
     const [detailsState, setDetailsState] = useState(details)
@@ -93,9 +95,13 @@ export default function Modal({
         payload.startDateEvent = startDateEventState
         payload.hourTimeSlotStart = hourTimeSlotStartState
         payload.minuteTimeSlotStart = minuteTimeSlotStartState
+        payload.updatedAt = moment().format('YYYY-MM-DDTHH:mm:ss')
+        payload.createdAt = createdAt
         payload.endDateEvent = endDateEventState
         payload.hourTimeSlotEnd = hourTimeSlotEndState
         payload.minuteTimeSlotEnd = minuteTimeSlotEndState
+        console.log(payload)
+        e.preventDefault()
         calculSlots()
         if (typeState === 0) {
             eventState.events.map(function (event) {
