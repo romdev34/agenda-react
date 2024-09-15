@@ -1,6 +1,6 @@
 import {createPortal} from "react-dom";
-import Modal from "./Modal.jsx";
-import EventModal from "./EventModal.jsx";
+import CreationEventModal from "./CreationEventModal.jsx";
+import UpdateEventModal from "./UpdateEventModal.jsx";
 import {useState} from "react";
 import {nanoid} from "nanoid";
 
@@ -58,11 +58,11 @@ export default function DaysTable({
                 }) : ""}</div>
             </div>}
 
-            {showModal && createPortal(<Modal
+            {showModal && createPortal(<CreationEventModal
                     setShowModal={setShowModal} eventId={eventId} year={year} month={month} day={dayNumber}/>,
                 document.body)}
 
-            {showEditEventModal && createPortal(<EventModal
+            {showEditEventModal && createPortal(<UpdateEventModal
                     setShowEditEventModal={setShowEditEventModal} eventDetails={eventDetails} eventId={eventId} year={year} month={month} day={dayNumber}/>,
                 document.body)}
         </>

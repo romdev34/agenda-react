@@ -5,7 +5,7 @@ import {useSelector} from "react-redux";
 import moment from "moment";
 import monthReducer from "../features/monthProperties.js";
 // eslint-disable-next-line react/prop-types
-export default function Modal({setShowModal, year, month, day}) {
+export default function CreationEventModal({setShowModal, year, month, day}) {
     moment.locale('fr')
     const regex1 = /(\d+-\d+-\d+)/
     let url = ""

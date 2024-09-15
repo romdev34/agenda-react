@@ -17,3 +17,6 @@
 > docker run -ti --rm --name agenda -v $(pwd):/app -p 8012:8012 ulysse699/agenda-react:1.0  npm run preview
 
 > créer un fichier .env.local à la racine du projet (local et serveur si besoin de config particulière)
+
+### pour supprimer un container lancé
+> docker rm agenda

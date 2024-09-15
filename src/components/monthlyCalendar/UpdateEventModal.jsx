@@ -4,7 +4,6 @@ import axios from "axios";
 import {useSelector} from "react-redux";
 import moment from "moment";
 import 'moment/dist/locale/fr';
-import monthReducer from "../features/monthProperties.js";
 import {nanoid} from "nanoid";
 // eslint-disable-next-line react/prop-types
 export default function Modal({
