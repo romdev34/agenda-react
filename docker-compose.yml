@@ -2,7 +2,6 @@ services:
   frontend:
     build:
       context: .
-    container_name: agenda
     volumes:
       - .:/app:rw,delegated
     tty: true
