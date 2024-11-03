@@ -4,7 +4,22 @@ services:
       context: .
     container_name: agenda
     ports:
-      - 8012:8012
+      - "80:80"
     volumes:
       - .:/app:rw,delegated
     tty: true
+    networks:
+      - agenda_api
+      - proxy
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.symfony.rule=Host(`agenda-react.romdev.ovh`)"
+      - "traefik.http.routers.frontend.entrypoints=websecure"
+      - "traefik.http.routers.frontend.tls.certresolver=letsencrypt"
+      - "traefik.http.services.frontend.loadbalancer.server.port=80"
+
+networks:
+  proxy:
+    external: true
+  agenda_api:
+    internal: true
