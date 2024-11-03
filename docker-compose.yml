@@ -10,7 +10,7 @@ services:
       - proxy
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.symfony.rule=Host(`agenda-react.romdev.ovh`)"
+      - "traefik.http.routers.frontend.rule=Host(`agenda-react.romdev.ovh`)"
       - "traefik.http.routers.frontend.entrypoints=websecure"
       - "traefik.http.routers.frontend.tls.certresolver=letsencrypt"
       - "traefik.http.services.frontend.loadbalancer.server.port=80"
