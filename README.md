@@ -4,19 +4,21 @@
 ## Etapes obligatoires dev et build
 
 ### installer les vendors en local (idem pour installer un vendor en particulier)
-> docker run -ti --rm --name agenda  -v $(pwd):/app -p 8012:8012 ulysse699/agenda-react:1.0  npm install
+> docker run -ti --rm --name agenda  -v $(pwd):/app -p 80:80 ulysse699/agenda-react:1.0  npm install
 
 ### Lancer le projet en local (si dev local)
-> docker run -ti --rm --name agenda -v $(pwd):/app -p 8012:8012 ulysse699/agenda-react:1.0  npm run dev
+> docker run -ti --rm --name agenda -v $(pwd):/app -p 80:80 ulysse699/agenda-react:1.0  npm run dev
 
 ### Création du dossier dist (si projet deployé)
 > docker run -it --rm  --name agenda -v $(pwd):/app ulysse699/agenda-react:1.0 npm run build
 
 
 ### Lancer le projet sur le serveur (si projet deployé)
-> docker run -ti --rm --name agenda -v $(pwd):/app -p 8012:8012 ulysse699/agenda-react:1.0  npm run preview
+> docker compose up
 
 > créer un fichier .env.local à la racine du projet (local et serveur si besoin de config particulière)
 
 ### pour supprimer un container lancé
 > docker rm agenda
+> 
+> TODO mettre à jour le docker compose en local
