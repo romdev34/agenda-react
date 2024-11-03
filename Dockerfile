@@ -11,4 +11,4 @@ RUN npm config set legacy-peer-deps true
 RUN npm install
 RUN npm run build
 
-EXPOSE 8012
+EXPOSE 80
