@@ -14,7 +14,7 @@ services:
       - "traefik.http.routers.frontend.entrypoints=websecure"
       - "traefik.http.routers.frontend.tls.certresolver=letsencrypt"
       - "traefik.http.services.frontend.loadbalancer.server.port=80"
-    command: npm run deploy
+    command: npm run preview
 
 networks:
   proxy:
