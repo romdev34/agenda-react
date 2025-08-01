@@ -11,118 +11,92 @@ export default function ModalConnexion({
                                        }) {
     const url = import.meta.env.VITE_API_LOGIN_URL
     const dispatch = useDispatch();
+    const payload = {}
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
 
-    async function handleSubmit(e) {
+    function handleSubmit(e) {
         e.preventDefault()
-
-        const payload = {
-            email: email,
-            password: password
-        }
+        payload.email = email
+        payload.password = password
 
         console.log("🚀 Début de la connexion...");
         console.log("📧 Email:", email);
         console.log("🔗 URL de connexion:", url);
+        console.log("📦 Payload:", payload);
 
         setApiState({...ApiState, loading: true})
 
-        try {
-            // Étape 1: Connexion et récupération du token
-            console.log("📡 Envoi de la requête de connexion...");
-            const loginResponse = await axios.post(url, payload);
+        axios.post(url, payload)
+            .then(function (res) {
+                console.log("✅ Réponse de connexion reçue:", res.status);
+                console.log("📄 Données complètes de la réponse:", res.data);
+                console.log("🎫 Token reçu:", res.data.token ? "OUI" : "NON");
 
-            console.log("✅ Réponse de connexion reçue:", loginResponse.status);
-            console.log("🎫 Token reçu:", loginResponse.data.token ? "OUI" : "NON");
+                setApiState({...ApiState, loading: false})
 
-            if (!loginResponse.data.token) {
-                throw new Error("Aucun token reçu du serveur");
-            }
+                console.log("💾 Stockage du token dans localStorage...");
+                localStorage.setItem('token', res.data.token)
 
-            // Étape 2: Stockage du token
-            console.log("💾 Stockage du token dans localStorage...");
-            localStorage.setItem('token', loginResponse.data.token);
+                // Vérification immédiate du stockage
+                const storedToken = localStorage.getItem('token');
+                console.log("✔️ Token stocké avec succès:", storedToken ? "OUI" : "NON");
+                console.log("🔍 Token stocké (premiers 10 caractères):", storedToken ? storedToken.substring(0, 10) + "..." : "AUCUN");
 
-            // Vérification immédiate du stockage
-            const storedToken = localStorage.getItem('token');
-            console.log("✔️ Token stocké avec succès:", storedToken ? "OUI" : "NON");
-            console.log("🔍 Token stocké (premiers 10 caractères):", storedToken ? storedToken.substring(0, 10) + "..." : "AUCUN");
-
-            if (!storedToken) {
-                throw new Error("Échec du stockage du token");
-            }
-
-            // Étape 3: Mise à jour de l'état de connexion
-            setIsLogged(true);
-            console.log("👤 État de connexion mis à jour");
-
-            // Étape 4: Récupération des événements avec le token
-            console.log("📅 Récupération des événements...");
-            const eventsResponse = await axios.get(
-                import.meta.env.VITE_API_EVENTS_URL,
-                {
-                    headers: {
-                        "Authorization": `Bearer ${storedToken}`
-                    }
+                if (localStorage.getItem('token')) {
+                    console.log("👤 Mise à jour de l'état de connexion...");
+                    setIsLogged(true)
                 }
-            );
+            })
+            .catch(function(error) {
+                console.error("❌ Erreur lors de la connexion:");
+                console.error("📍 Message d'erreur:", error.response?.data?.message || error.message);
+                console.error("🔍 Status HTTP:", error.response?.status);
+                console.error("📋 Données complètes de l'erreur:", error.response?.data);
 
-            console.log("✅ Événements récupérés:", eventsResponse.data["hydra:member"]?.length || 0, "événement(s)");
+                setApiState({...ApiState, loading: false})
+            })
+            .then(function (res) {
+                if (res) { // On vérifie que res existe (succès de la première requête)
+                    console.log("📅 Récupération des événements...");
+                    const token = localStorage.getItem('token');
+                    console.log("🔑 Token utilisé pour les événements:", token ? token.substring(0, 10) + "..." : "AUCUN");
 
-            // Étape 5: Mise à jour du store Redux
-            dispatch(updateEvents(eventsResponse.data["hydra:member"]));
-            console.log("🔄 Store Redux mis à jour");
+                    axios.get(import.meta.env.VITE_API_EVENTS_URL, {
+                        headers: {"Authorization": `Bearer ${token}`}
+                    })
+                        .then(function (res) {
+                            console.log("✅ Événements récupérés:", res.data["hydra:member"]?.length || 0, "événement(s)");
+                            console.log("📊 Données des événements:", res.data["hydra:member"]);
 
-            // Étape 6: Fermeture de la modal
-            setDisplayModalConnexion(false);
-            console.log("🚪 Modal fermée");
+                            setApiState({...ApiState, loading: false})
+                            setDisplayModalConnexion(false)
+                            dispatch(updateEvents(res.data["hydra:member"]))
 
-        } catch (error) {
-            console.error("❌ Erreur during connexion:");
-            console.error("📍 Type d'erreur:", error.message);
-
-            if (error.response) {
-                console.error("🔍 Status HTTP:", error.response.status);
-                console.error("📄 Message serveur:", error.response.data?.message || "Pas de message");
-                console.error("📋 Données complètes:", error.response.data);
-            } else if (error.request) {
-                console.error("🌐 Erreur réseau - pas de réponse reçue");
-            } else {
-                console.error("⚙️ Erreur de configuration:", error.message);
-            }
-
-            // Nettoyage en cas d'erreur
-            localStorage.removeItem('token');
-            setIsLogged(false);
-            console.log("🧹 Token supprimé et état de connexion réinitialisé");
-
-        } finally {
-            setApiState({...ApiState, loading: false});
-            console.log("🏁 Processus de connexion terminé");
-        }
+                            console.log("🔄 Store Redux mis à jour et modal fermée");
+                        })
+                        .catch(error => {
+                            console.error("❌ Erreur lors de la récupération des événements:");
+                            console.error("📍 Message:", error.response?.data?.message || error.message);
+                            console.error("🔍 Status HTTP:", error.response?.status);
+                        })
+                }
+            })
+            .catch(error => {
+                console.error("❌ Erreur finale:");
+                console.error("📍 Message:", error.response?.data?.message || error.message);
+            })
     }
 
     // Fonction utilitaire pour vérifier l'état du localStorage
     const checkTokenStatus = () => {
         const token = localStorage.getItem('token');
-        console.log("🔍 Vérification token:", {
+        console.log("🔍 Debug - État actuel du token:", {
             exists: !!token,
             length: token?.length || 0,
             preview: token ? token.substring(0, 20) + "..." : "AUCUN"
         });
     };
-
-    // Ajout d'un bouton de débogage (à retirer en production)
-    const DebugButton = () => (
-        <button
-            type="button"
-            onClick={checkTokenStatus}
-            className="text-xs bg-gray-500 text-white py-1 px-2 rounded mt-2"
-        >
-            Debug Token
-        </button>
-    );
 
     return (
         <div
@@ -144,32 +118,30 @@ export default function ModalConnexion({
                         Close
                     </button>
                 </div>
-                <input
-                    className="block m-auto border-gray-300 border text-center mb-3 p-2"
-                    onChange={(e) => setEmail(e.target.value)}
-                    value={email}
-                    type="email"
-                    placeholder="email"
-                    required
-                />
-                <input
-                    className="block m-auto border-gray-300 border text-center mb-3 p-2"
-                    onChange={(e) => setPassword(e.target.value)}
-                    value={password}
-                    type="password"
-                    placeholder="password"
-                    required
-                />
+                <input className="block m-auto border-gray-300 border text-center"
+                       onChange={(e) => setEmail(e.target.value)}
+                       value={email}
+                       type="email"
+                       placeholder="email"/>
+                <input className="block m-auto border-gray-300 border text-center"
+                       onChange={(e) => setPassword(e.target.value)}
+                       value={password}
+                       type="password"
+                       placeholder="password"/>
                 <button
-                    className="w-full text-center text-white cursor-pointer rounded p-2 bg-blue-600 disabled:bg-gray-400"
-                    type="submit"
-                    disabled={ApiState.loading}
-                >
-                    {ApiState.loading ? "Connexion..." : "Valider"}
+                    className="w-full text-center text-white cursor-pointer rounded p-2 bg-blue-600"
+                    type="submit">
+                    Valider
                 </button>
 
                 {/* Bouton de débogage - à retirer en production */}
-                <DebugButton />
+                <button
+                    type="button"
+                    onClick={checkTokenStatus}
+                    className="text-xs bg-gray-500 text-white py-1 px-2 rounded mt-2 w-full"
+                >
+                    Debug Token
+                </button>
             </form>
         </div>
     )
