@@ -6,7 +6,6 @@ services:
       - .:/app:rw,delegated
     tty: true
     networks:
-      - agenda_api
       - proxy
     labels:
       - "traefik.enable=true"
@@ -19,5 +18,3 @@ services:
 networks:
   proxy:
     external: true
-  agenda_api:
-    internal: true
