@@ -16,7 +16,7 @@
 > docker run -it --rm  --name agenda -v $(pwd):/app ulysse699/agenda-react:1.0 npm run build
 
 ### Lancer le projet sur le serveur (si projet deployé)
-> docker compose up
+> docker compose -f docker-compose-prod.yml up
 
 > créer un fichier .env.local à la racine du projet (local et serveur si besoin de config particulière)
 
