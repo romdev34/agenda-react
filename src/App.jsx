@@ -30,7 +30,7 @@ function App() {
 
     useEffect(() => {
         setApiState({...ApiState, loading: true})
-        if (checkIsLogged) {
+        if (checkIsLogged()) {
             axios.get(import.meta.env.VITE_API_EVENTS_URL , {headers: {"Authorization": `Bearer ${localStorage.getItem('token')}`}})
                 .then(function (res) {
                     setApiState({...ApiState, loading: false})
@@ -43,6 +43,9 @@ function App() {
                         setIsLogged(false)
                     }
                 })
+        }  else {
+            // Cas utilisateur non connecté → désactiver le loader
+            setApiState({...ApiState, loading: false})
         }
     }, []);
 
@@ -51,11 +54,6 @@ function App() {
     }
 
     const [isLogged, setIsLogged] = useState(checkIsLogged)
-
-    // const credentialsObject = {
-    //     email: "test3@test.com",
-    //     password: "test3"
-    // }
 
     return (
         <>

@@ -1,0 +1,8 @@
+services:
+  frontend:
+    build:
+      context: .
+    volumes:
+      - .:/app:rw,delegated
+    tty: true
+    command: npm run dev
