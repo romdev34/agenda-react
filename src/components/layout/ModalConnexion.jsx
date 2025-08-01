@@ -17,37 +17,61 @@ export default function ModalConnexion({
 
     function handleSubmit(e) {
         e.preventDefault()
+
+        // AJOUT DE LOGS POUR DEBUG
+        console.log("=== DEBUG LOGIN ===")
+        console.log("URL de login:", url)
+        console.log("Email:", email)
+        console.log("Password:", password ? "***présent***" : "vide")
+        console.log("Payload:", payload)
+
         payload.email = email
         payload.password = password
         setApiState({...ApiState, loading: true})
+
+        console.log("Envoi de la requête POST vers:", url)
+
         axios.post(url, payload)
             .then(function (res) {
+                console.log("✅ Réponse login reçue:", res.data)
                 const token = res.data.token;
                 localStorage.setItem('token', token);
 
                 if (token) {
+                    console.log("✅ Token récupéré:", token.substring(0, 20) + "...")
                     setIsLogged(true);
 
                     // Ensuite, on récupère les événements
-                    axios.get(import.meta.env.VITE_API_EVENTS_URL, {
+                    const eventsUrl = import.meta.env.VITE_API_EVENTS_URL
+                    console.log("URL des événements:", eventsUrl)
+
+                    axios.get(eventsUrl, {
                         headers: {
                             "Authorization": `Bearer ${token}`
                         }
                     })
                         .then(function (res) {
+                            console.log("✅ Événements récupérés:", res.data)
                             setApiState(prev => ({...prev, loading: false}));
                             setDisplayModalConnexion(false);
                             dispatch(updateEvents(res.data["hydra:member"]));
                         })
                         .catch(error => {
-                            console.error("Erreur récupération événements :", error.response?.data?.message || error.message);
+                            console.error("❌ Erreur récupération événements:", error)
+                            console.error("Response data:", error.response?.data)
+                            console.error("Status:", error.response?.status)
                             setApiState(prev => ({...prev, loading: false}));
                         });
                 } else {
+                    console.error("❌ Pas de token dans la réponse")
                     setApiState(prev => ({...prev, loading: false}));
                 }
             })
             .catch(function (error) {
+                console.error("❌ Erreur login:", error)
+                console.error("Response data:", error.response?.data)
+                console.error("Status:", error.response?.status)
+                console.error("Headers:", error.response?.headers)
                 setApiState(prev => ({...prev, loading: false}));
             });
     }
