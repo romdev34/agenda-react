@@ -53,17 +53,42 @@ function App() {
         return !!localStorage.getItem('token');
     }
 
+    function handleLogout() {
+        localStorage.removeItem('token');
+        console.log("🗑️ Token supprimé du localStorage");
+
+        // Mettre à jour l'état de connexion
+        setIsLogged(false);
+
+        // Vider le store Redux des événements
+        dispatch(updateEvents([]));
+    }
+
     const [isLogged, setIsLogged] = useState(checkIsLogged)
 
     return (
         <>
             <h1 className="text-5xl">Mon agenda en react</h1>
             {content}
-            {!isLogged && <div className=" m-auto min-w-[703px] max-w-[1000px]">
-                <button onClick={() => setDisplayModalConnexion(!displayModalConnexion)}
-                        className="text-white block ml-auto rounded p-2 bg-blue-600 hover:bg-blue-800">Connexion
-                </button>
-            </div>}
+            <div className="m-auto min-w-[703px] max-w-[1000px]">
+                {!isLogged ? (
+                    // Bouton Connexion (affiché si non connecté)
+                    <button
+                        onClick={() => setDisplayModalConnexion(!displayModalConnexion)}
+                        className="text-white block ml-auto rounded p-2 bg-blue-600 hover:bg-blue-800"
+                    >
+                        Connexion
+                    </button>
+                ) : (
+                    // Bouton Déconnexion (affiché si connecté)
+                    <button
+                        onClick={handleLogout}
+                        className="text-white block ml-auto rounded p-2 bg-red-600 hover:bg-red-800"
+                    >
+                        Déconnexion
+                    </button>
+                )}
+            </div>
             <Calendar/>
 
             {displayModalConnexion && createPortal(<ModalConnexion
