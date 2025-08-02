@@ -12,7 +12,6 @@ function App() {
     const dispatch = useDispatch();
 
     const [displayModalConnexion, setDisplayModalConnexion] = useState(false)
-
     const [ApiState, setApiState] = useState(
         {
             loading: false,
@@ -31,7 +30,7 @@ function App() {
     useEffect(() => {
         setApiState({...ApiState, loading: true})
         if (checkIsLogged()) {
-            axios.get(import.meta.env.VITE_API_EVENTS_URL , {headers: {"Authorization": `Bearer ${localStorage.getItem('token')}`}})
+            axios.get(import.meta.env.VITE_API_EVENTS_URL, {headers: {"Authorization": `Bearer ${localStorage.getItem('token')}`}})
                 .then(function (res) {
                     setApiState({...ApiState, loading: false})
                     dispatch(updateEvents(res.data["hydra:member"]))
@@ -43,7 +42,7 @@ function App() {
                         setIsLogged(false)
                     }
                 })
-        }  else {
+        } else {
             // Cas utilisateur non connecté → désactiver le loader
             setApiState({...ApiState, loading: false})
         }
@@ -62,6 +61,8 @@ function App() {
 
         // Vider le store Redux des événements
         dispatch(updateEvents([]));
+
+        window.location.reload()
     }
 
     const [isLogged, setIsLogged] = useState(checkIsLogged)
@@ -92,7 +93,8 @@ function App() {
             <Calendar/>
 
             {displayModalConnexion && createPortal(<ModalConnexion
-                    setDisplayModalConnexion={setDisplayModalConnexion} apiState={ApiState} setIsLogged={setIsLogged} setApiState={setApiState}/>,
+                    setDisplayModalConnexion={setDisplayModalConnexion} apiState={ApiState} setIsLogged={setIsLogged}
+                    setApiState={setApiState}/>,
                 document.body)}
         </>
     )
