@@ -27,7 +27,12 @@ export default function ModalConnexion({
 
         setApiState({...ApiState, loading: true})
 
-        axios.post(url, payload)
+        axios.post(url, payload, {
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+            }
+        })
             .then(function (res) {
                 console.log("✅ Réponse de connexion reçue:", res.status);
                 console.log("📄 Données complètes de la réponse:", res.data);
