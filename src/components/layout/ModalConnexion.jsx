@@ -15,7 +15,7 @@ export default function ModalConnexion({
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
 
-    function handleSubmit(e) {
+    async function handleSubmit(e) {
         e.preventDefault()
         payload.email = email
         payload.password = password
@@ -27,70 +27,58 @@ export default function ModalConnexion({
 
         setApiState({...ApiState, loading: true})
 
-        axios.post(url, payload, {
-            headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json',
+        try {
+            // Étape 1: Connexion
+            const loginRes = await axios.post(url, payload)
+
+            console.log("✅ Réponse de connexion reçue:", loginRes.status);
+            console.log("📄 Données complètes de la réponse:", loginRes.data);
+            console.log("🎫 Token reçu:", loginRes.data.token ? "OUI" : "NON");
+
+            console.log("💾 Stockage du token dans localStorage...");
+            localStorage.setItem('token', loginRes.data.token)
+
+            // Vérification immédiate du stockage
+            const storedToken = localStorage.getItem('token');
+            console.log("✔️ Token stocké avec succès:", storedToken ? "OUI" : "NON");
+            console.log("🔍 Token stocké (premiers 10 caractères):", storedToken ? storedToken.substring(0, 10) + "..." : "AUCUN");
+
+            if (storedToken) {
+                console.log("👤 Mise à jour de l'état de connexion...");
+                setIsLogged(true)
             }
-        })
-            .then(function (res) {
-                console.log("✅ Réponse de connexion reçue:", res.status);
-                console.log("📄 Données complètes de la réponse:", res.data);
-                console.log("🎫 Token reçu:", res.data.token ? "OUI" : "NON");
 
-                setApiState({...ApiState, loading: false})
+            // Étape 2: Récupération des événements
+            console.log("📅 Récupération des événements...");
+            console.log("🔑 Token utilisé pour les événements:", storedToken ? storedToken.substring(0, 10) + "..." : "AUCUN");
 
-                console.log("💾 Stockage du token dans localStorage...");
-                localStorage.setItem('token', res.data.token)
-
-                // Vérification immédiate du stockage
-                const storedToken = localStorage.getItem('token');
-                console.log("✔️ Token stocké avec succès:", storedToken ? "OUI" : "NON");
-                console.log("🔍 Token stocké (premiers 10 caractères):", storedToken ? storedToken.substring(0, 10) + "..." : "AUCUN");
-
-                if (localStorage.getItem('token')) {
-                    console.log("👤 Mise à jour de l'état de connexion...");
-                    setIsLogged(true)
-                }
+            const eventsRes = await axios.get(import.meta.env.VITE_API_EVENTS_URL, {
+                headers: {"Authorization": `Bearer ${storedToken}`}
             })
-            .catch(function(error) {
-                console.error("❌ Erreur lors de la connexion:");
+
+            console.log("✅ Événements récupérés:", eventsRes.data["hydra:member"]?.length || 0, "événement(s)");
+            console.log("📊 Données des événements:", eventsRes.data["hydra:member"]);
+
+            // Mise à jour de l'état final
+            setApiState({...ApiState, loading: false})
+            setDisplayModalConnexion(false)
+            dispatch(updateEvents(eventsRes.data["hydra:member"]))
+
+            console.log("🔄 Store Redux mis à jour et modal fermée");
+
+        } catch (error) {
+            console.error("❌ Erreur:", error);
+
+            if (error.response) {
                 console.error("📍 Message d'erreur:", error.response?.data?.message || error.message);
                 console.error("🔍 Status HTTP:", error.response?.status);
                 console.error("📋 Données complètes de l'erreur:", error.response?.data);
+            } else {
+                console.error("📍 Message:", error.message);
+            }
 
-                setApiState({...ApiState, loading: false})
-            })
-            .then(function (res) {
-                if (res) { // On vérifie que res existe (succès de la première requête)
-                    console.log("📅 Récupération des événements...");
-                    const token = localStorage.getItem('token');
-                    console.log("🔑 Token utilisé pour les événements:", token ? token.substring(0, 10) + "..." : "AUCUN");
-
-                    axios.get(import.meta.env.VITE_API_EVENTS_URL, {
-                        headers: {"Authorization": `Bearer ${token}`}
-                    })
-                        .then(function (res) {
-                            console.log("✅ Événements récupérés:", res.data["hydra:member"]?.length || 0, "événement(s)");
-                            console.log("📊 Données des événements:", res.data["hydra:member"]);
-
-                            setApiState({...ApiState, loading: false})
-                            setDisplayModalConnexion(false)
-                            dispatch(updateEvents(res.data["hydra:member"]))
-
-                            console.log("🔄 Store Redux mis à jour et modal fermée");
-                        })
-                        .catch(error => {
-                            console.error("❌ Erreur lors de la récupération des événements:");
-                            console.error("📍 Message:", error.response?.data?.message || error.message);
-                            console.error("🔍 Status HTTP:", error.response?.status);
-                        })
-                }
-            })
-            .catch(error => {
-                console.error("❌ Erreur finale:");
-                console.error("📍 Message:", error.response?.data?.message || error.message);
-            })
+            setApiState({...ApiState, loading: false})
+        }
     }
 
     // Fonction utilitaire pour vérifier l'état du localStorage
